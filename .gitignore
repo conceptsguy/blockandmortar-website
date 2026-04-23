@@ -1,0 +1,9 @@
+# Original large PNGs (replaced by WebP)
+assets/hero.png
+assets/vert-*.png
+
+# Source files / uploads
+uploads/
+
+# OS
+.DS_Store
