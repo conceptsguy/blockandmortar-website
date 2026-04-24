@@ -236,11 +236,19 @@ function navClick(hash) {
   return undefined;
 }
 
+const NAV_LINKS = [
+  { label: 'How it works', hash: '#prompt' },
+  { label: 'Platform',     hash: '#bento' },
+  { label: 'Verticals',    hash: '#verticals' },
+  { label: 'Collaborate',  hash: '#collab' },
+];
+
 function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
   React.useEffect(() => {
     const onScroll = () => {
-      // switch once we've passed most of the hero (bright sky area)
       const t = Math.min(window.innerHeight * 0.55, 520);
       setScrolled(window.scrollY > t);
     };
@@ -249,7 +257,13 @@ function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // If we're on the home page, the logo should scroll to top instead of reloading.
+  React.useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   const onHomePage = !!document.querySelector('.hero-bg') || window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
   const brandHref = onHomePage ? '#' : 'index.html';
   const onBrandClick = onHomePage ? (e) => {
@@ -258,24 +272,52 @@ function Nav() {
     history.replaceState(null, '', window.location.pathname);
   } : undefined;
 
+  const handleLink = (hash) => (e) => {
+    const handler = navClick(hash);
+    closeMenu();
+    if (handler) handler(e);
+  };
+
   return (
-    <nav className={'nav ' + (scrolled ? 'scrolled' : 'on-hero')}>
-      <div className="container nav-inner">
-        <a href={brandHref} onClick={onBrandClick} className="brand">
-          <img src="assets/logo.png" alt="Block & Mortar" className="brand-logo" />
-        </a>
-        <div className="nav-links">
-          <a href="index.html#prompt" onClick={navClick('#prompt')}>How it works</a>
-          <a href="index.html#bento" onClick={navClick('#bento')}>Platform</a>
-          <a href="index.html#verticals" onClick={navClick('#verticals')}>Verticals</a>
-          <a href="index.html#collab" onClick={navClick('#collab')}>Collaborate</a>
+    <>
+      <nav className={'nav ' + (scrolled ? 'scrolled' : 'on-hero')}>
+        <div className="container nav-inner">
+          <a href={brandHref} onClick={onBrandClick} className="brand">
+            <img src="assets/logo.png" alt="Block & Mortar" className="brand-logo" />
+          </a>
+          <div className="nav-links">
+            {NAV_LINKS.map(l => (
+              <a key={l.hash} href={'index.html' + l.hash} onClick={navClick(l.hash)}>{l.label}</a>
+            ))}
+          </div>
+          <div className="nav-right">
+            <a href="#" className="nav-login">Log in</a>
+            <a href="#" onClick={window.openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
+          </div>
+          <button
+            className={'nav-hamburger' + (menuOpen ? ' is-open' : '')}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            <span /><span /><span />
+          </button>
         </div>
-        <div className="nav-right">
-          <a href="#" className="nav-login">Log in</a>
-          <a href="#" onClick={window.openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
+      </nav>
+
+      <div className={'nav-overlay' + (menuOpen ? ' is-open' : '')} aria-hidden={!menuOpen}>
+        <button className="nav-overlay-close" onClick={closeMenu} aria-label="Close menu">✕</button>
+        <nav className="nav-overlay-links">
+          {NAV_LINKS.map(l => (
+            <a key={l.hash} href={'index.html' + l.hash} onClick={handleLink(l.hash)}>{l.label}</a>
+          ))}
+        </nav>
+        <div className="nav-overlay-actions">
+          <a href="#" className="nav-overlay-login" onClick={closeMenu}>Log in</a>
+          <a href="#" onClick={(e) => { closeMenu(); if (window.openDemoModal) window.openDemoModal(e); }} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
         </div>
       </div>
-    </nav>
+    </>
   );
 }
 
@@ -406,11 +448,11 @@ function Hero() {
   const [hovered, setHovered] = React.useState(null);
 
   const logos = [
-    { t: 'AON',            src: 'assets/logo-aon.png',            h: 49 },
-    { t: 'EPC Group',      src: 'assets/logo-epc.png',            h: 49 },
-    { t: 'United Rentals', src: 'assets/logo-united-rentals.png', h: 49 },
-    { t: 'GM',             src: 'assets/logo-gm.png',             h: 49 },
-    { t: 'Molzer',         src: 'assets/logo-molzer.png',         h: 49 },
+    { t: 'AON',            src: 'assets/logo-aon.png',            h: 24 },
+    { t: 'EPC Group',      src: 'assets/logo-epc.png',            h: 24 },
+    { t: 'United Rentals', src: 'assets/logo-united-rentals.png', h: 24 },
+    { t: 'GM',             src: 'assets/logo-gm.png',             h: 24 },
+    { t: 'Molzer',         src: 'assets/logo-molzer.png',         h: 24 },
   ];
   return (
     <section className="hero">
