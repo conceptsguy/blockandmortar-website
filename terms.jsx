@@ -277,7 +277,7 @@ const TERMS_SECTIONS = [
     body: (
       <>
         <p className="first">Block & Mortar, Inc.</p>
-        <p>Email: <a href="mailto:legal@blockandmortar.ai">legal@blockandmortar.ai</a><br />
+        <p>Email: <a href="mailto:info@blockandmortar.ai">info@blockandmortar.ai</a><br />
         Website: <a href="https://www.blockandmortar.ai">https://www.blockandmortar.ai</a></p>
       </>
     )
@@ -365,9 +365,9 @@ function TermsPage() {
               <div className="legal-contact">
                 <div>
                   <div className="legal-contact-k">Questions about these terms?</div>
-                  <div className="legal-contact-v">legal@blockandmortar.ai</div>
+                  <div className="legal-contact-v">info@blockandmortar.ai</div>
                 </div>
-                <a href="mailto:legal@blockandmortar.ai" className="btn">
+                <a href="mailto:info@blockandmortar.ai" className="btn">
                   Contact legal <span className="arrow">→</span>
                 </a>
               </div>

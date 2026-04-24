@@ -7,12 +7,13 @@ const { useState, useEffect, useCallback } = React;
 
 const VERTICALS = ['Retail', 'Office', 'Mixed Use', 'Data Centers', 'Infrastructure', 'Industrial'];
 const ROLES = ['Developer', 'General Contractor', 'Subcontractor', 'Vendor', 'Investor / Financier', 'Insurer', 'Other'];
+const COMPANY_SIZES = ['1–10', '11–50', '51–200', '201–1,000', '1,000+'];
 
 function DemoModal() {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
-    first: '', last: '', email: '', verticals: [], role: ''
+    first: '', last: '', email: '', verticals: [], role: '', companySize: ''
   });
 
   const close = useCallback(() => {
@@ -134,6 +135,20 @@ function DemoModal() {
                   >
                     <option value="" disabled>Select your role…</option>
                     {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                  <svg className="dm-select-caret" viewBox="0 0 10 6" width="10" height="6"><path d="M1 1 L5 5 L9 1" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+              </label>
+
+              <label className="dm-field">
+                <span className="dm-label">Company size</span>
+                <div className="dm-select">
+                  <select
+                    value={form.companySize}
+                    onChange={e => setForm(f => ({ ...f, companySize: e.target.value }))}
+                  >
+                    <option value="" disabled>Select company size…</option>
+                    {COMPANY_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                   <svg className="dm-select-caret" viewBox="0 0 10 6" width="10" height="6"><path d="M1 1 L5 5 L9 1" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>

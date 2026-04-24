@@ -602,8 +602,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   transition: opacity 220ms ease, transform 260ms cubic-bezier(.3,.7,.3,1);
 }
 .hero-hotspot.anchor-left   .hero-float-card { top: 52px; left: 0; transform-origin: top left; }
-.hero-hotspot.anchor-right  .hero-float-card { top: 52px; right: 0; transform-origin: top right; }
-.hero-hotspot.anchor-bottom .hero-float-card { bottom: 52px; right: 0; transform-origin: bottom right; }
+.hero-hotspot.anchor-right  .hero-float-card { bottom: 52px; right: 0; transform-origin: bottom right; transform: translateY(-6px) scale(0.97); }
+.hero-hotspot.anchor-bottom .hero-float-card { bottom: 52px; right: 0; transform-origin: bottom right; transform: translateY(-6px) scale(0.97); }
 .hero-hotspot.is-hovered .hero-float-card {
   opacity: 1;
   transform: translateY(0) scale(1);

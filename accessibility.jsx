@@ -121,7 +121,7 @@ const A11Y_SECTIONS = [
           <li>Extended time for any timed workflow</li>
         </ul>
         <p>
-          Reach out to <a href="mailto:accessibility@blockandmortar.ai">accessibility@blockandmortar.ai</a> and we'll respond within two business days.
+          Reach out to <a href="mailto:info@blockandmortar.ai">info@blockandmortar.ai</a> and we'll respond within two business days.
         </p>
       </>
     ),
@@ -164,7 +164,7 @@ const A11Y_SECTIONS = [
       <>
         <p className="first">For accessibility questions, accommodation requests, or audit reports:</p>
         <ul>
-          <li><strong>Email:</strong> <a href="mailto:accessibility@blockandmortar.ai">accessibility@blockandmortar.ai</a></li>
+          <li><strong>Email:</strong> <a href="mailto:info@blockandmortar.ai">info@blockandmortar.ai</a></li>
           <li><strong>Phone:</strong> +1 (816) 555-0142 — weekdays, 9am–6pm CT</li>
           <li><strong>Mail:</strong> Block &amp; Mortar, Inc. · Attn: Accessibility · 1832 Main St · Kansas City, MO 64108</li>
         </ul>
@@ -261,9 +261,9 @@ function AccessibilityPage() {
               <div className="legal-contact">
                 <div>
                   <div className="legal-contact-k">Report an accessibility issue</div>
-                  <div className="legal-contact-v">accessibility@blockandmortar.ai</div>
+                  <div className="legal-contact-v">info@blockandmortar.ai</div>
                 </div>
-                <a href="mailto:accessibility@blockandmortar.ai" className="btn">
+                <a href="mailto:info@blockandmortar.ai" className="btn">
                   Email accessibility team <span className="arrow">→</span>
                 </a>
               </div>
