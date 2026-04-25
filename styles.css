@@ -439,7 +439,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hero-link:hover { color: #1a1410; border-bottom-color: rgba(26,20,16,0.7); }
 .hero-center h1 em { font-style: normal; color: rgba(26,20,16,0.55); }
 @media (max-width: 1499px) {
-  .hero-center h1 { font-size: clamp(22px, 2.6vw, 38px); max-width: 30ch; }
+  .hero-center h1 { font-size: clamp(28px, 3.5vw, 50px); max-width: 30ch; }
 }
 
 .hero-center-mid { max-width: 980px; width: 100%; margin: 0 auto; padding: 0 24px; }
@@ -900,6 +900,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hero-trusted {
   position: relative; z-index: 3;
   margin-top: auto;
+  margin-bottom: 50px;
   padding: 20px 0 18px;
   background: linear-gradient(180deg, rgba(11,13,16,0) 0%, rgba(11,13,16,0.55) 55%, rgba(11,13,16,0.82) 100%);
 }
