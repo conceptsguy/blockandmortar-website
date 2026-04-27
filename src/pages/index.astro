@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import App from '../components/App';
 ---
 
 <BaseLayout title="Block and Mortar — Estimate the build from a prompt">
-  <div id="root"></div>
+  <App client:only="react" />
 </BaseLayout>
