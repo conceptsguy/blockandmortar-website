@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Block & Mortar – 3D Spinning Brick</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #f0ede8;
+    overflow: hidden;
+  }
+  canvas { display: block; }
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const W = 500, H = 500;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x000000, 0); // fully transparent canvas
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+camera.position.set(0, 0, 6.5);
+camera.lookAt(0, 0, 0);
+
+// ── Flat two-tone shader ───────────────────────────────
+// Object-space normal's max axis component = 1.0 on flat faces,
+// < 1.0 on curved edges. Hard cutoff paints edges as background.
+const mat = new THREE.ShaderMaterial({
+  uniforms: {
+    uFaceColor: { value: new THREE.Color(0x080808) },
+  },
+  vertexShader: `
+    varying vec3 vObjNormal;
+    void main() {
+      vObjNormal = normal; // object-space, no transform needed
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform vec3 uFaceColor;
+    varying vec3 vObjNormal;
+
+    void main() {
+      vec3 n = normalize(vObjNormal);
+      float axisFit = max(max(abs(n.x), abs(n.y)), abs(n.z));
+      // Discard curved edges
+      if (axisFit < 0.96) discard;
+      // Discard top and bottom faces
+      if (abs(n.y) > 0.9) discard;
+      gl_FragColor = vec4(uFaceColor, 1.0);
+    }
+  `
+});
+
+// ── Geometry ─────────────────────────────────────────
+const geo = new RoundedBoxGeometry(3.2, 1.6, 1.6, 8, 0.22);
+const brick = new THREE.Mesh(geo, mat);
+brick.rotation.x = 0;
+scene.add(brick);
+
+// ── Drag to rotate on Y axis ──────────────────────────
+let isDragging = false;
+let lastX = 0;
+let autoSpin = true;
+
+renderer.domElement.addEventListener('mousedown', e => {
+  isDragging = true;
+  autoSpin = false;
+  lastX = e.clientX;
+  renderer.domElement.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const delta = e.clientX - lastX;
+  brick.rotation.y += delta * 0.01;
+  lastX = e.clientX;
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+  renderer.domElement.style.cursor = 'grab';
+  // Resume auto-spin after a moment
+  setTimeout(() => { autoSpin = true; }, 800);
+});
+
+renderer.domElement.style.cursor = 'grab';
+
+// ── Animate ───────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  if (autoSpin) brick.rotation.y += 0.018;
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+
+</body>
+</html>
