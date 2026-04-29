@@ -1,24 +1,41 @@
 ---
-import { getCollection } from 'astro:content';
+import { sanityClient } from '../lib/sanity';
+import { createImageUrlBuilder } from '@sanity/image-url';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TeamPage from '../components/TeamPage';
 
-const members = (await getCollection('team'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .map(({ data }) => data);
+const builder = createImageUrlBuilder(sanityClient);
+
+const rawMembers = await sanityClient.fetch(
+  `*[_type == "teamMember"] | order(order asc){
+    name, role, initials, tint, photo, bio, order
+  }`
+) ?? [];
+
+const members = rawMembers.map((m: any) => ({
+  name:     m.name,
+  role:     m.role,
+  initials: m.initials,
+  tint:     m.tint,
+  photo:    m.photo
+    ? builder.image(m.photo).width(400).height(400).fit('crop').url()
+    : null,
+  bio:      m.bio,
+  order:    m.order,
+}));
 
 const teamSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'Block and Mortar Team',
-  itemListElement: members.map((m, i) => ({
+  itemListElement: members.map((m: any, i: number) => ({
     '@type': 'ListItem',
     position: i + 1,
     item: {
       '@type': 'Person',
       name: m.name,
       jobTitle: m.role,
-      image: `https://blockandmortar.ai${m.photo}`,
+      image: m.photo ?? undefined,
       description: m.bio,
       worksFor: {
         '@type': 'Organization',

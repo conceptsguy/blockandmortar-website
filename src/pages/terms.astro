@@ -1,11 +1,32 @@
 ---
+import { sanityClient } from '../lib/sanity';
 import LegalLayout from '../layouts/LegalLayout.astro';
 import TermsPage from '../components/TermsPage';
+
+const data = await sanityClient.fetch(
+  `*[_type == "legalPage" && pageKey == "terms"][0]{
+    lastUpdated,
+    subtitle,
+    leadParagraph,
+    sections[]{
+      "id": id.current,
+      num,
+      title,
+      body
+    }
+  }`
+);
 ---
 
 <LegalLayout
   title="Terms & Conditions — Block and Mortar"
   description="Block & Mortar's Terms of Service governing access to and use of the platform."
 >
-  <TermsPage client:only="react" />
+  <TermsPage
+    sections={data?.sections ?? []}
+    lastUpdated={data?.lastUpdated}
+    subtitle={data?.subtitle}
+    leadParagraph={data?.leadParagraph}
+    client:only="react"
+  />
 </LegalLayout>

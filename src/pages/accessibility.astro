@@ -1,11 +1,32 @@
 ---
+import { sanityClient } from '../lib/sanity';
 import LegalLayout from '../layouts/LegalLayout.astro';
 import AccessibilityPage from '../components/AccessibilityPage';
+
+const data = await sanityClient.fetch(
+  `*[_type == "legalPage" && pageKey == "accessibility"][0]{
+    lastUpdated,
+    subtitle,
+    leadParagraph,
+    sections[]{
+      "id": id.current,
+      num,
+      title,
+      body
+    }
+  }`
+);
 ---
 
 <LegalLayout
   title="Accessibility Statement — Block and Mortar"
   description="Block & Mortar's commitment to WCAG 2.2 AA accessibility, compatible assistive technology, and how to report issues."
 >
-  <AccessibilityPage client:only="react" />
+  <AccessibilityPage
+    sections={data?.sections ?? []}
+    lastUpdated={data?.lastUpdated}
+    subtitle={data?.subtitle}
+    leadParagraph={data?.leadParagraph}
+    client:only="react"
+  />
 </LegalLayout>

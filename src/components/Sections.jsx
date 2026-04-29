@@ -353,53 +353,57 @@ function TypedNum({ value, active, delay = 0 }) {
   );
 }
 
-function HeroQuotes() {
-  const QUOTES = [
-    {
-      text: 'Block and Mortar allows us to collaborate with developers earlier around cost, schedule, and constructability — leading to better projects and fewer surprises during construction.',
-      name: 'Kevin Goebel',
-      title: 'CEO, Goebel Mitts Construction',
-    },
-    {
-      text: 'Block and Mortar gives us earlier visibility into how projects are structured during pre-construction, allowing us to identify risks sooner and align coverage strategies with real project conditions.',
-      name: 'Brian Heast',
-      title: 'Managing Director, Aon',
-    },
-    {
-      text: 'With earlier access to project scope and timelines, we can plan equipment strategy more effectively and support contractors with greater efficiency from day one.',
-      name: 'Tony Leopold',
-      title: 'SVP, Chief Technology & Strategy Officer, United Rentals',
-    },
-    {
-      text: 'Block and Mortar creates a collaborative framework to model cost, schedule, and design together giving us greater confidence in the decisions we make moving projects forward.',
-      name: 'Mike McKeen',
-      title: 'President & CEO, EPC Real Estate',
-    },
-  ];
+// Fallback quotes used when Sanity data is unavailable (e.g. during local
+// development before the project is connected to Sanity Cloud).
+const FALLBACK_QUOTES = [
+  {
+    text: 'Block and Mortar allows us to collaborate with developers earlier around cost, schedule, and constructability — leading to better projects and fewer surprises during construction.',
+    personName: 'Kevin Goebel',
+    personTitle: 'CEO, Goebel Mitts Construction',
+  },
+  {
+    text: 'Block and Mortar gives us earlier visibility into how projects are structured during pre-construction, allowing us to identify risks sooner and align coverage strategies with real project conditions.',
+    personName: 'Brian Heast',
+    personTitle: 'Managing Director, Aon',
+  },
+  {
+    text: 'With earlier access to project scope and timelines, we can plan equipment strategy more effectively and support contractors with greater efficiency from day one.',
+    personName: 'Tony Leopold',
+    personTitle: 'SVP, Chief Technology & Strategy Officer, United Rentals',
+  },
+  {
+    text: 'Block and Mortar creates a collaborative framework to model cost, schedule, and design together giving us greater confidence in the decisions we make moving projects forward.',
+    personName: 'Mike McKeen',
+    personTitle: 'President & CEO, EPC Real Estate',
+  },
+];
+
+function HeroQuotes({ quotes = [] }) {
+  const items = quotes.length > 0 ? quotes : FALLBACK_QUOTES;
   const [idx, setIdx] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setIdx(i => (i + 1) % QUOTES.length), 7000);
+    const id = setInterval(() => setIdx(i => (i + 1) % items.length), 7000);
     return () => clearInterval(id);
-  }, []);
+  }, [items.length]);
   return (
     <div className="hero-quotes" aria-live="polite">
       <div className="hero-quote-stage">
-        {QUOTES.map((q, i) => (
+        {items.map((q, i) => (
           <figure
             key={i}
             className={'hero-quote' + (i === idx ? ' is-active' : '')}
             aria-hidden={i !== idx}
           >
-            <blockquote>{q.text}</blockquote>
+            <blockquote>{q.text ?? q.quote}</blockquote>
             <figcaption>
-              <span className="hero-quote-name">{q.name}</span>
-              <span className="hero-quote-title">{q.title}</span>
+              <span className="hero-quote-name">{q.personName ?? q.name}</span>
+              <span className="hero-quote-title">{q.personTitle ?? q.title}</span>
             </figcaption>
           </figure>
         ))}
       </div>
       <div className="hero-quote-dots" role="tablist" aria-label="Testimonials">
-        {QUOTES.map((_, i) => (
+        {items.map((_, i) => (
           <button
             key={i}
             role="tab"
@@ -414,7 +418,7 @@ function HeroQuotes() {
   );
 }
 
-export function Hero() {
+export function Hero({ heading, subheading, testimonials = [] }) {
   const properties = [
     {
       key: 'apartments',
@@ -490,16 +494,16 @@ export function Hero() {
       <div className="hero-center">
         <div className="hero-center-mid">
           <h1>
-            Clarity and confidence across the real estate development lifecycle.
+            {heading ?? 'Clarity and confidence across the real estate development lifecycle.'}
           </h1>
           <p className="hero-sub">
-            AI-powered cost intelligence on a single collaborative platform.
+            {subheading ?? 'AI-powered cost intelligence on a single collaborative platform.'}
           </p>
           <div className="hero-cta-row">
             <a href="#" onClick={openDemoModal} className="btn btn-dark">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
             <a href="#how" className="hero-link">See how it works</a>
           </div>
-          <HeroQuotes />
+          <HeroQuotes quotes={testimonials} />
         </div>
       </div>
 
@@ -561,47 +565,42 @@ export function PromptSection() {
 // Steps
 // ---------------------------------------------------------------------------
 
-export function Steps() {
-  const steps = [
-    {
-      n: '01', title: 'Project Analysis',
-      body: 'Evaluate the site, pro forma, and schedule. What took months of desk research happens in hours, with stakeholders aligned from day one.',
-      viz: <div className="viz viz-analysis">{Array.from({length:7}).map((_,i)=><div key={i} className="col"><div className="bar" style={{ animationDelay: (i*120)+'ms' }} /></div>)}</div>
-    },
-    {
-      n: '02', title: 'Planning',
-      body: 'Navigate rezoning, jurisdictions and code. Block & Mortar consolidates regulatory data and coordinates approvals so viability is confirmed, not guessed.',
-      viz: <div className="viz viz-plan">
-        <div className="route" />
-        <div className="pin"       style={{ left: '18%', top: '34%' }} />
-        <div className="pin cyan"  style={{ left: '62%', top: '32%' }} />
-        <div className="pin"       style={{ left: '44%', top: '70%' }} />
-      </div>
-    },
-    {
-      n: '03', title: 'Design + Construction',
-      body: 'Plug into the tools GCs already use. Plans, RFIs, and cost deltas stay coordinated.  Execution moves from design through delivery with speed and precision.',
-      viz: <div className="viz viz-build">{Array.from({length:6}).map((_,i)=><div key={i} className="brick" />)}</div>
-    },
-    {
-      n: '04', title: 'Finance + Operations',
-      body: 'Benchmark actuals against pro forma in real time. Each completed project sharpens the model for the next. A compounding feedback loop.',
-      viz: <div className="viz viz-chart">
-        <svg viewBox="0 0 200 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#7fd8d1" stopOpacity="0.35" />
-              <stop offset="1" stopColor="#7fd8d1" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d="M0,80 L20,72 L40,74 L60,60 L80,64 L100,50 L120,40 L140,44 L160,30 L180,22 L200,18 L200,100 L0,100 Z" fill="url(#chart-fill)" />
-          <path d="M0,80 L20,72 L40,74 L60,60 L80,64 L100,50 L120,40 L140,44 L160,30 L180,22 L200,18" fill="none" stroke="#7fd8d1" strokeWidth="1.2" />
-          <path d="M0,88 L40,84 L80,78 L120,64 L160,52 L200,40" fill="none" stroke="#e8b366" strokeWidth="1" strokeDasharray="3 3" opacity="0.7" />
-        </svg>
-        <div className="marker">actual vs. pro forma</div>
-      </div>
-    },
-  ];
+// Visualisations are purely decorative UI — they stay hardcoded.
+// Only the text (title + body) comes from Sanity.
+const STEP_VIZ = [
+  <div className="viz viz-analysis">{Array.from({length:7}).map((_,i)=><div key={i} className="col"><div className="bar" style={{ animationDelay: (i*120)+'ms' }} /></div>)}</div>,
+  <div className="viz viz-plan">
+    <div className="route" />
+    <div className="pin"       style={{ left: '18%', top: '34%' }} />
+    <div className="pin cyan"  style={{ left: '62%', top: '32%' }} />
+    <div className="pin"       style={{ left: '44%', top: '70%' }} />
+  </div>,
+  <div className="viz viz-build">{Array.from({length:6}).map((_,i)=><div key={i} className="brick" />)}</div>,
+  <div className="viz viz-chart">
+    <svg viewBox="0 0 200 100" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#7fd8d1" stopOpacity="0.35" />
+          <stop offset="1" stopColor="#7fd8d1" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L20,72 L40,74 L60,60 L80,64 L100,50 L120,40 L140,44 L160,30 L180,22 L200,18 L200,100 L0,100 Z" fill="url(#chart-fill)" />
+      <path d="M0,80 L20,72 L40,74 L60,60 L80,64 L100,50 L120,40 L140,44 L160,30 L180,22 L200,18" fill="none" stroke="#7fd8d1" strokeWidth="1.2" />
+      <path d="M0,88 L40,84 L80,78 L120,64 L160,52 L200,40" fill="none" stroke="#e8b366" strokeWidth="1" strokeDasharray="3 3" opacity="0.7" />
+    </svg>
+    <div className="marker">actual vs. pro forma</div>
+  </div>,
+];
+
+const FALLBACK_STEPS = [
+  { number: '01', title: 'Project Analysis',      body: 'Evaluate the site, pro forma, and schedule. What took months of desk research happens in hours, with stakeholders aligned from day one.' },
+  { number: '02', title: 'Planning',               body: 'Navigate rezoning, jurisdictions and code. Block & Mortar consolidates regulatory data and coordinates approvals so viability is confirmed, not guessed.' },
+  { number: '03', title: 'Design + Construction',  body: 'Plug into the tools GCs already use. Plans, RFIs, and cost deltas stay coordinated. Execution moves from design through delivery with speed and precision.' },
+  { number: '04', title: 'Finance + Operations',   body: 'Benchmark actuals against pro forma in real time. Each completed project sharpens the model for the next. A compounding feedback loop.' },
+];
+
+export function Steps({ steps = [] }) {
+  const items = steps.length > 0 ? steps : FALLBACK_STEPS;
   return (
     <section className="section" id="how">
       <div className="container">
@@ -616,12 +615,12 @@ export function Steps() {
           </div>
         </div>
         <div className="steps">
-          {steps.map(s => (
-            <div className="step" key={s.n}>
-              <div className="num">{s.n}</div>
+          {items.map((s, i) => (
+            <div className="step" key={s.number ?? i}>
+              <div className="num">{s.number}</div>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
-              {s.viz}
+              {STEP_VIZ[i]}
             </div>
           ))}
         </div>
@@ -722,14 +721,32 @@ export function Bento() {
 // Verticals
 // ---------------------------------------------------------------------------
 
-export function Verticals() {
-  const cards = [
-    { k: 'apartments',  title: 'Multifamily',     meta: '24 stories · 312 units · Kansas City',  label: 'APARTMENT RENDER' },
-    { k: 'datacenter',  title: 'Data Centers',    meta: '48 MW · hyperscale · Phoenix',          label: 'DATA CENTER RENDER' },
-    { k: 'franchise',   title: 'Franchise Builds',meta: '62 locations · retail · rolled in 14 mo', label: 'FRANCHISE RENDER' },
-    { k: 'office',      title: 'Office',          meta: '410,000 sqft · Class A · Austin',       label: 'OFFICE RENDER' },
-    { k: 'retail',      title: 'Retail',          meta: 'Anchor + inline · 22-site portfolio',   label: 'RETAIL RENDER' },
-  ];
+const FALLBACK_VERTICALS = [
+  { key: 'apartments',  title: 'Multifamily',      meta: '24 stories · 312 units · Kansas City'   },
+  { key: 'datacenter',  title: 'Data Centers',     meta: '48 MW · hyperscale · Phoenix'            },
+  { key: 'franchise',   title: 'Franchise Builds', meta: '62 locations · retail · rolled in 14 mo' },
+  { key: 'office',      title: 'Office',           meta: '410,000 sqft · Class A · Austin'         },
+  { key: 'retail',      title: 'Retail',           meta: 'Anchor + inline · 22-site portfolio'     },
+];
+
+const VERTICAL_LABELS = {
+  apartments: 'APARTMENT RENDER',
+  datacenter: 'DATA CENTER RENDER',
+  franchise:  'FRANCHISE RENDER',
+  office:     'OFFICE RENDER',
+  retail:     'RETAIL RENDER',
+};
+
+const VERT_STAMPS = [240, 327, 414, 501, 588];
+
+export function Verticals({ verticals = [] }) {
+  const cards = (verticals.length > 0 ? verticals : FALLBACK_VERTICALS).map((v, i) => ({
+    k:     v.key,
+    title: v.title,
+    meta:  v.meta,
+    label: VERTICAL_LABELS[v.key] ?? v.key.toUpperCase() + ' RENDER',
+    stamp: VERT_STAMPS[i] ?? 240 + i * 87,
+  }));
   return (
     <section className="section" id="verticals" style={{ paddingTop: 40 }}>
       <div className="container">
@@ -754,7 +771,7 @@ export function Verticals() {
                   <div className="vert-title">{c.title}</div>
                   <div className="vert-meta">{c.meta}</div>
                 </div>
-                <div className="vert-stamp">EST → {Math.round(240 + i * 87)}d</div>
+                <div className="vert-stamp">EST → {c.stamp}d</div>
               </div>
             </div>
           ))}
@@ -768,14 +785,14 @@ export function Verticals() {
 // CTA
 // ---------------------------------------------------------------------------
 
-export function CTA() {
+export function CTA({ heading, description }) {
   return (
     <section className="section" id="cta" style={{ paddingBottom: 80 }}>
       <div className="container">
         <div className="cta">
           <div className="eyebrow" style={{ position: 'relative' }}><span className="dot" /> Request a demo</div>
-          <h2>Model your next project <em>in minutes.</em></h2>
-          <p>Bring your toughest deal. We'll show you a live estimate, a defensible schedule, and the path from prompt to pro forma  in one working session.</p>
+          <h2>{heading ?? <>Model your next project <em>in minutes.</em></>}</h2>
+          <p>{description ?? "Bring your toughest deal. We'll show you a live estimate, a defensible schedule, and the path from prompt to pro forma in one working session."}</p>
           <div className="row">
             <a href="#" onClick={openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
             <a href="#" onClick={openDemoModal} className="btn btn-ghost">Talk to the team</a>

@@ -1,11 +1,32 @@
 ---
+import { sanityClient } from '../lib/sanity';
 import LegalLayout from '../layouts/LegalLayout.astro';
 import PrivacyPage from '../components/PrivacyPage';
+
+const data = await sanityClient.fetch(
+  `*[_type == "legalPage" && pageKey == "privacy"][0]{
+    lastUpdated,
+    subtitle,
+    leadParagraph,
+    sections[]{
+      "id": id.current,
+      num,
+      title,
+      body
+    }
+  }`
+);
 ---
 
 <LegalLayout
   title="Privacy Policy — Block and Mortar"
   description="Block & Mortar's privacy policy — how we collect, use, and protect your information."
 >
-  <PrivacyPage client:only="react" />
+  <PrivacyPage
+    sections={data?.sections ?? []}
+    lastUpdated={data?.lastUpdated}
+    subtitle={data?.subtitle}
+    leadParagraph={data?.leadParagraph}
+    client:only="react"
+  />
 </LegalLayout>
