@@ -3,14 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev":    "sanity dev",
-    "build":  "sanity build",
+    "dev": "sanity dev",
+    "build": "sanity build",
     "deploy": "sanity deploy",
-    "types":  "sanity typegen generate"
+    "types": "sanity typegen generate"
   },
   "dependencies": {
-    "sanity":               "^3",
-    "@sanity/vision":       "^3",
-    "@sanity/presentation": "^2"
+    "@sanity/vision": "^3",
+    "react-is": "^19.2.5",
+    "sanity": "^3",
+    "styled-components": "^6.4.1"
   }
 }
