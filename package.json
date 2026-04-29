@@ -4,16 +4,20 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
+    "cms": "tinacms dev -c \"astro dev\"",
     "build": "astro build",
+    "build:vercel": "tinacms build && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
+    "@tinacms/cli": "^2.2.5",
     "astro": "^6.1.9",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tinacms": "^3.7.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",

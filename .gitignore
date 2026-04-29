@@ -17,3 +17,7 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# TinaCMS — generated files (rebuilt on every deploy)
+tina/__generated__/
+public/admin/
