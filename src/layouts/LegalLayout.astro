@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '../styles/legal.css';
 import SEO from '../components/SEO.astro';
+import VisualEditing from '../components/VisualEditing.astro';
 
 interface Props {
   title: string;
@@ -32,5 +33,6 @@ const {
   </head>
   <body class="legal-page">
     <slot />
+    <VisualEditing />
   </body>
 </html>
