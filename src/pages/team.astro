@@ -1,8 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TeamPage from '../components/TeamPage';
+
+const members = (await getCollection('team'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ data }) => data);
 ---
 
 <BaseLayout title="The Team — Block and Mortar">
-  <TeamPage client:only="react" />
+  <TeamPage members={members} client:only="react" />
 </BaseLayout>

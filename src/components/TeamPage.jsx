@@ -7,49 +7,6 @@ function CareerModal() {
   return null;
 }
 
-const TEAM_MEMBERS = [
-  {
-    name: 'Usman Wajid',
-    role: 'CEO / Founder',
-    initials: 'UW',
-    tint: '#7fd8d1',
-    photo: '/assets/team-usman.jpg',
-    bio: 'Two decades building software for owners and operators. Spent the last decade at the intersection of construction technology and the built environment.',
-  },
-  {
-    name: 'Jeet Das',
-    role: 'Chief Technology Officer',
-    initials: 'JD',
-    tint: '#e8b366',
-    photo: '/assets/team-jeet.jpg',
-    bio: 'Platform architect. Scaled data and ML products across construction, logistics, and real estate — obsessive about the last mile of adoption.',
-  },
-  {
-    name: 'Dan Linhart',
-    role: 'Board Member / Investor',
-    initials: 'DL',
-    tint: '#c6c9c4',
-    photo: '/assets/team-dan.jpg',
-    bio: 'Longtime operator and investor in the built environment. Brings decades of perspective on how capital actually moves through development.',
-  },
-  {
-    name: 'Brad Hardin',
-    role: 'Board Member / Investor',
-    initials: 'BH',
-    tint: '#a7c8f2',
-    photo: '/assets/team-brad.jpg',
-    bio: 'Construction technology veteran; author and practitioner on integrating digital practice into project delivery at every scale.',
-  },
-  {
-    name: 'George Brooks',
-    role: 'Board Member / Investor',
-    initials: 'GB',
-    tint: '#d2a7f2',
-    photo: '/assets/team-george.jpg',
-    bio: 'Product and design leader. Helped build software companies that put human-centered tools in the hands of professional operators.',
-  },
-];
-
 function TeamHero() {
   return (
     <section className="team-hero">
@@ -68,12 +25,12 @@ function TeamHero() {
   );
 }
 
-function TeamGrid() {
+function TeamGrid({ members }) {
   return (
     <section className="team-grid-wrap">
       <div className="container">
         <div className="team-grid">
-          {TEAM_MEMBERS.map(m => (
+          {members.map(m => (
             <article className="team-card" key={m.name}>
               <div
                 className="team-avatar has-photo"
@@ -176,12 +133,12 @@ function TeamApply() {
   );
 }
 
-export default function TeamPage() {
+export default function TeamPage({ members = [] }) {
   return (
     <>
       <Nav />
       <TeamHero />
-      <TeamGrid />
+      <TeamGrid members={members} />
       <TeamStory />
       <TeamApply />
       <Footer />
