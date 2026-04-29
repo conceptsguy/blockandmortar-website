@@ -6,7 +6,9 @@ import { schemaTypes } from './schemas';
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? 'brri6o86';
 const dataset   = process.env.SANITY_STUDIO_DATASET   ?? 'production';
-const previewOrigin = process.env.SANITY_STUDIO_PREVIEW_URL ?? 'https://blockandmortar.ai';
+// Use localhost:4321 when developing locally, the live site in production
+const previewOrigin = process.env.SANITY_STUDIO_PREVIEW_URL
+  ?? (process.env.NODE_ENV === 'production' ? 'https://blockandmortar.ai' : 'http://localhost:4321');
 
 export default defineConfig({
   name: 'block-and-mortar',
