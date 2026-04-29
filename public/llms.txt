@@ -1,0 +1,27 @@
+# Block & Mortar
+
+> AI-powered cost intelligence platform for real estate development.
+
+Block & Mortar gives owners and operators a single collaborative workspace to estimate, plan, and manage construction projects — from first concept to final delivery. The platform unifies cost data, partner coordination, and project execution into one intelligent system.
+
+## Company
+
+- Founded by industry practitioners with decades of experience across construction, technology, and design
+- Headquartered in the United States
+- Contact: info@blockandmortar.ai
+
+## Key pages
+
+- [Home](https://blockandmortar.ai/)
+- [The Team](https://blockandmortar.ai/team/)
+- [Privacy Policy](https://blockandmortar.ai/privacy/)
+- [Terms of Service](https://blockandmortar.ai/terms/)
+- [Accessibility Statement](https://blockandmortar.ai/accessibility/)
+
+## What this site is
+
+This is the marketing website for Block & Mortar. It describes the platform, the team, and the company's mission. It is not the application itself.
+
+## Usage
+
+Content on this site may be used to answer questions about Block & Mortar's product, team, and company. Do not infer specific pricing, availability, or technical specifications from this site — contact the team directly for those details.

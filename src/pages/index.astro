@@ -1,8 +1,28 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import App from '../components/App';
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Block and Mortar',
+  alternateName: 'Block & Mortar',
+  url: 'https://blockandmortar.ai',
+  logo: 'https://blockandmortar.ai/favicon.svg',
+  description:
+    'AI-powered cost intelligence platform for real estate development — estimate, plan, and manage construction from a single collaborative workspace.',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'info@blockandmortar.ai',
+    contactType: 'customer service',
+  },
+};
 ---
 
-<BaseLayout title="Block and Mortar — Estimate the build from a prompt">
+<BaseLayout
+  title="Block and Mortar — Estimate the build from a prompt"
+  description="AI-powered cost intelligence for real estate development. Estimate, plan, and manage construction from a single collaborative platform."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(orgSchema)} />
   <App client:only="react" />
 </BaseLayout>

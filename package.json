@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
+    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/vercel": "^10.0.6",
     "@tinacms/cli": "^2.2.5",
     "astro": "^6.1.9",
     "react": "^18.3.1",

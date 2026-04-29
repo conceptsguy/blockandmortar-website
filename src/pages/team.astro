@@ -6,8 +6,34 @@ import TeamPage from '../components/TeamPage';
 const members = (await getCollection('team'))
   .sort((a, b) => a.data.order - b.data.order)
   .map(({ data }) => data);
+
+const teamSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Block and Mortar Team',
+  itemListElement: members.map((m, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Person',
+      name: m.name,
+      jobTitle: m.role,
+      image: `https://blockandmortar.ai${m.photo}`,
+      description: m.bio,
+      worksFor: {
+        '@type': 'Organization',
+        name: 'Block and Mortar',
+        url: 'https://blockandmortar.ai',
+      },
+    },
+  })),
+};
 ---
 
-<BaseLayout title="The Team — Block and Mortar">
+<BaseLayout
+  title="The Team — Block and Mortar"
+  description="Meet the Block & Mortar founding team — operators, builders, designers, and engineers who've lived the problems we now build against."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(teamSchema)} />
   <TeamPage members={members} client:only="react" />
 </BaseLayout>
