@@ -1,139 +1,159 @@
 # Block & Mortar — CMS Guide
 
-The site uses **TinaCMS** to edit content without touching code. Everything you update through the CMS is saved back to the git repository as plain files (YAML for team members, MDX for blog posts), so there's always a version history.
+The site uses **Sanity** as its CMS. All editable content (home page copy, team members, testimonials, and legal pages) lives in Sanity's database and is fetched at build time. The CEO and any designated editor can make changes through **Sanity Studio** — a browser-based editing tool that requires no coding.
 
 ---
 
 ## What you can edit
 
-| Content type | Where it lives | How to edit |
+| Content type | Location in Studio | Notes |
 |---|---|---|
-| Team members | `src/content/team/*.yaml` | CMS → Team Members |
-| Blog posts | `src/content/blog/*.mdx` | CMS → Blog Posts |
-| Photos & images | `public/assets/` | Upload through the CMS media browser |
-
-> **Legal pages (Terms, Privacy, Accessibility)** and all other copy are currently in React components (`src/components/`). To edit them, open the relevant `.jsx` file directly.
-
----
-
-## Option A — Edit locally (no account needed)
-
-This is the fastest way to make a quick change. Everything runs on your machine.
-
-**1. Start the CMS + dev server together:**
-```bash
-npm run cms
-```
-
-**2. Open the editor:**
-```
-http://localhost:4321/admin/index.html
-```
-
-**3. Make your changes** in the browser UI → click **Save**.  
-The YAML / MDX file on disk is updated immediately.
-
-**4. Commit and push** the changed file to deploy:
-```bash
-git add src/content/
-git commit -m "Update team bios"
-git push
-```
+| Home page copy | **Home Page** singleton | Hero heading/subheading, CTA, steps, verticals |
+| Team members | **Team Members** | Name, role, photo, bio, display order |
+| Testimonials | **Testimonials** | Quote text, person name & title, display order |
+| Legal pages | **Legal Pages** | Accessibility, Privacy, Terms — full rich-text sections |
 
 ---
 
-## Option B — Tina Cloud (for editors without code access)
+## Accessing the Studio
 
-Tina Cloud hosts the CMS backend so anyone with a login can edit content from `https://your-domain.com/admin` — no terminal, no git. Changes are committed back to GitHub automatically.
+### Option A — Sanity-hosted Studio (recommended for editors)
 
-### One-time setup (done by a developer)
-
-**1. Create a Tina Cloud project:**
-- Go to [app.tina.io](https://app.tina.io) → **New project**
-- Connect it to the `blockandmortar-website` GitHub repository
-- Set the **Site URL** to your Vercel production URL
-
-**2. Get your credentials:**
-- In the Tina Cloud dashboard → **Configuration**
-- Copy **Client ID** and generate a **Read/Write Token**
-
-**3. Add them as environment variables:**
-
-*For local development* — create a `.env` file (do not commit it):
-```bash
-cp .env.example .env
-# then fill in the values:
-TINA_CLIENT_ID=your-client-id-here
-TINA_TOKEN=your-token-here
+Once the Studio is deployed, the CEO and editors visit:
+```
+https://blockandmortar.sanity.studio
 ```
 
-*For Vercel* — go to your Vercel project → **Settings → Environment Variables**:
-| Key | Value | Environment |
-|---|---|---|
-| `TINA_CLIENT_ID` | your Client ID | Production, Preview, Development |
-| `TINA_TOKEN` | your Read/Write Token | Production, Preview, Development |
+Log in with your Sanity account (you must be invited — see *Inviting editors* below).
 
-**4. Re-deploy** to Vercel — the `/admin` page will now be connected to Tina Cloud.
+### Option B — Local Studio (for developers)
 
-**5. Invite editors** in Tina Cloud → **Users** → Add by email.
+Start the Studio locally from the repo:
+```bash
+npm run cms          # opens the studio on http://localhost:3333
+npm run dev          # run the Astro site separately on http://localhost:4321
+```
 
-### Day-to-day editing (for editors)
-
-1. Go to `https://blockandmortar.ai/admin`
-2. Log in with your Tina Cloud account
-3. Click the collection you want to edit (Team Members or Blog Posts)
-4. Make changes → **Save**
-5. Changes are automatically committed to GitHub and trigger a Vercel redeploy (≈ 60 seconds)
+The `npm run cms` command runs `cd studio && npm run dev` — it starts only the Studio, not the website. Run both in separate terminals if you want to preview the site at the same time.
 
 ---
 
-## Editing team members
+## Editing content
 
-Each team member is a YAML file in `src/content/team/`. In the CMS:
+### Home Page
 
-1. **CMS → Team Members**
+1. Studio → **Home Page** (there is only one — it's a singleton document)
+2. Edit any field: Hero Heading, Hero Subheading, CTA Heading, CTA Description, Steps, or Verticals
+3. Click **Publish** — the change is saved to Sanity
+
+> The live website will update on the next Vercel deploy (triggered automatically if the webhook is configured — see *Deploy workflow* below).
+
+### Team Members
+
+1. Studio → **Team Members**
 2. Click a name to edit, or **Create new** to add someone
 3. Fields:
-   - **Full name** — display name on the card
+   - **Full name** — displayed on the card
    - **Role / title** — shown below the name
-   - **Initials** — 2 letters, used as fallback if the photo is missing
-   - **Accent colour** — hex value for the card border tint (e.g. `#7fd8d1`)
-   - **Portrait photo** — upload via the media browser; lands in `public/assets/`
-   - **Bio** — 1–2 sentences
-   - **Display order** — `1` = first card, `2` = second, etc.
-4. **Save** → the file is written; commit (local) or auto-committed (Tina Cloud)
+   - **Initials** — 2 letters, shown when no photo is uploaded
+   - **Accent colour** — hex value for the card tint (e.g. `#7fd8d1`)
+   - **Portrait photo** — click the image field → Upload; Sanity handles resizing
+   - **Bio** — 1–2 sentence description
+   - **Display order** — integer; `1` = first card on the page
+4. Click **Publish**
+
+### Testimonials
+
+1. Studio → **Testimonials → Create new** (or click an existing one)
+2. Fill in **Quote**, **Person Name**, **Person Title**, and **Display Order**
+3. Click **Publish**
+
+### Legal Pages (Accessibility, Privacy, Terms)
+
+1. Studio → **Legal Pages** → click the page you want (filter by Page Key)
+2. Edit the **Last Updated** date, **Subtitle**, or **Lead Paragraph** fields at the top
+3. To edit a section:
+   - Click the section in the **Sections** array
+   - Edit the **Title** or the **Body** rich-text field
+   - Body supports: paragraphs, H3 headings, bold, italic, inline code, links, bullet lists, numbered lists
+4. To add a new section: click **Add item** at the bottom of the Sections array
+5. Click **Publish**
 
 ---
 
-## Writing a blog post
+## Inviting editors
 
-Blog posts live in `src/content/blog/` as MDX files.
-
-1. **CMS → Blog Posts → Create new**
-2. Fill in:
-   - **Title** — the post headline
-   - **Publish date** — controls display order when the blog index is built
-   - **Excerpt** — 1–2 sentences for listing cards
-   - **Author** — optional; defaults to blank
-   - **Draft** — tick this to keep the post hidden until you're ready
-   - **Body** — rich-text editor with headings, bold, italic, links, images
-3. **Save**
-
-> **Note:** The blog index page (`/blog`) doesn't exist yet — it's scaffolded but empty. When you're ready to launch the blog, ask a developer to add the listing and post routes.
+1. Go to [manage.sanity.io](https://manage.sanity.io) → your Block & Mortar project
+2. **Members** → **Invite** → enter the editor's email address
+3. Set their role to **Editor** (can publish content) or **Viewer** (read-only)
+4. They'll receive an email invitation and can log in at `blockandmortar.sanity.studio`
 
 ---
 
-## Uploading images
+## Deploy workflow
 
-In the CMS editor, click any **image field** → **Choose image** → **Upload**.  
-Images land in `public/assets/` and are served at `/assets/filename.jpg`.
+Content changes in Sanity don't appear on the live site automatically — the Astro build must run to pull in the latest data.
 
-Recommended sizes:
-| Use | Width | Format |
-|---|---|---|
-| Team portrait | 800 × 800 px | JPG or WebP |
-| Blog hero | 1600 × 900 px | WebP |
-| General | — | WebP where possible |
+**Manual:** Trigger a new Vercel deploy from the Vercel dashboard.
+
+**Automatic (recommended):** Set up a Vercel deploy hook connected to a Sanity webhook so every time you click **Publish** in the Studio, a redeploy fires automatically (~60 seconds end-to-end).
+
+To set this up:
+1. **Vercel** → Project → Settings → Git → Deploy Hooks → **Add** → name it "Sanity Publish", branch `main` → copy the hook URL
+2. **manage.sanity.io** → your project → API → Webhooks → **Create** → paste the URL, set trigger to "publish" for all document types → Save
+
+---
+
+## Deploying the Studio
+
+The Studio must be deployed separately to Sanity's hosting (free):
+
+```bash
+cd studio
+npm install   # first time only
+npm run deploy
+```
+
+This publishes the Studio to `blockandmortar.sanity.studio`. Run this once after the initial setup, and again any time you change a schema file in `studio/schemas/`.
+
+---
+
+## Setting up from scratch (developer setup)
+
+These steps only need to happen once when setting up a new environment.
+
+**1. Create a Sanity project**
+- Go to [sanity.io/get-started](https://www.sanity.io/get-started) → Create project → name it "Block and Mortar"
+- Note the **Project ID** shown on the dashboard
+
+**2. Add your Project ID to the repo**
+
+Update `studio/sanity.cli.ts` and `studio/sanity.config.ts` — replace `REPLACE_ME` with your actual Project ID.
+
+**3. Create `.env.local` in the Astro project root** (not committed to git):
+```
+PUBLIC_SANITY_PROJECT_ID=your-project-id-here
+PUBLIC_SANITY_DATASET=production
+```
+
+**4. Set Vercel environment variables**
+In your Vercel project → Settings → Environment Variables:
+| Key | Value |
+|---|---|
+| `PUBLIC_SANITY_PROJECT_ID` | your project ID |
+| `PUBLIC_SANITY_DATASET` | `production` |
+
+**5. Enter content in the Studio**
+Run `npm run cms` → visit `http://localhost:3333` → create and publish:
+- The **Home Page** singleton
+- All **Team Members** (upload photos from `public/assets/team-*.jpg`)
+- All **Testimonials**
+- The three **Legal Pages** (Accessibility, Privacy, Terms) with all their sections
+
+**6. Deploy the Studio**
+```bash
+cd studio && npm run deploy
+```
 
 ---
 
@@ -141,10 +161,9 @@ Recommended sizes:
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Astro dev server only (no CMS UI) |
-| `npm run cms` | TinaCMS + Astro dev server together — use this for local editing |
-| `npm run build` | Astro-only build (no admin UI) — fast, works without credentials |
-| `npm run build:vercel` | Full build: Tina admin UI + Astro — used by Vercel in production |
+| `npm run dev` | Astro dev server (site only) |
+| `npm run cms` | Sanity Studio dev server on `localhost:3333` |
+| `npm run build` | Production Astro build — fetches live data from Sanity |
 | `npm run preview` | Serve the production build locally |
 | `npm run typecheck` | TypeScript check without building |
 
@@ -152,14 +171,17 @@ Recommended sizes:
 
 ## Troubleshooting
 
-**Admin page shows "Loading…" forever**  
-→ Make sure `npm run cms` is running (not `npm run dev`). The CMS dev server runs on a separate port and proxies Astro.
+**Site shows placeholder / default content instead of my Sanity content**
+→ Make sure `PUBLIC_SANITY_PROJECT_ID` is set in `.env.local` (local) or Vercel Environment Variables (production). The site falls back to hardcoded defaults when no project ID is configured.
 
-**"Invalid credentials" on the cloud admin**  
-→ Check that `TINA_CLIENT_ID` and `TINA_TOKEN` are set in Vercel → Environment Variables and that a fresh deployment has happened since you added them.
+**A change I published isn't on the live site**
+→ A new Vercel build needs to run. Either trigger one manually from the Vercel dashboard, or configure the Sanity → Vercel webhook (see *Deploy workflow* above).
 
-**Changes don't appear after saving**  
-→ In local mode, the file is saved but you need to commit and push. In cloud mode, check GitHub for the auto-commit and Vercel for the deploy status.
+**Team member photo isn't showing**
+→ In Studio, open the team member → make sure a photo is uploaded and the document is **Published** (not just saved as a draft).
 
-**A team member is missing from the page**  
-→ Check their `order` field is a positive integer. Duplicate order values won't crash the site but the sort order will be unpredictable.
+**Schema error after editing a `studio/schemas/` file**
+→ Restart the Studio dev server (`npm run cms`). After shipping schema changes, re-deploy the Studio with `cd studio && npm run deploy`.
+
+**I accidentally created two Home Page documents**
+→ The Home Page schema uses `__experimental_actions: ['update', 'publish']` to prevent new documents. If a duplicate slipped through, delete it in Studio → delete the document that does NOT have the ID `singleton-homePage`.
