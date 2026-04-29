@@ -4,7 +4,7 @@ import { presentationTool } from '@sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './schemas';
 
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? 'REPLACE_ME';
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? 'brri6o86';
 const dataset   = process.env.SANITY_STUDIO_DATASET   ?? 'production';
 const previewOrigin = process.env.SANITY_STUDIO_PREVIEW_URL ?? 'https://blockandmortar.ai';
 
