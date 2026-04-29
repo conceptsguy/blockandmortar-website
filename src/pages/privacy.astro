@@ -1,0 +1,11 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import PrivacyPage from '../components/PrivacyPage';
+---
+
+<LegalLayout
+  title="Privacy Policy — Block and Mortar"
+  description="Block & Mortar's privacy policy — how we collect, use, and protect your information."
+>
+  <PrivacyPage client:only="react" />
+</LegalLayout>

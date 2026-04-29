@@ -1,0 +1,11 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import TermsPage from '../components/TermsPage';
+---
+
+<LegalLayout
+  title="Terms & Conditions — Block and Mortar"
+  description="Block & Mortar's Terms of Service governing access to and use of the platform."
+>
+  <TermsPage client:only="react" />
+</LegalLayout>

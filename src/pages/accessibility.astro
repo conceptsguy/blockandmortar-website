@@ -1,0 +1,11 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import AccessibilityPage from '../components/AccessibilityPage';
+---
+
+<LegalLayout
+  title="Accessibility Statement — Block and Mortar"
+  description="Block & Mortar's commitment to WCAG 2.2 AA accessibility, compatible assistive technology, and how to report issues."
+>
+  <AccessibilityPage client:only="react" />
+</LegalLayout>
