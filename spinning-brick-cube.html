@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Block & Mortar – Brick to Cube</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #f0ede8;
+    overflow: hidden;
+  }
+  canvas { display: block; }
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// ── Loop timing (seconds) ────────────────────────────────
+const T_LOOP      = 9.0;
+const T_MORPH_IN  = 2.0;   // brick spin → morph starts
+const T_CUBE      = 3.8;   // morph done → cube tumble
+const T_MORPH_OUT = 7.2;   // cube tumble → morph back
+// morph back ends at T_LOOP = 9.0
+
+const W = 500, H = 500;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x000000, 0);
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+camera.position.set(0, 0, 6.5);
+camera.lookAt(0, 0, 0);
+
+// ── Shared uniforms — both meshes read the same values ───
+const uniforms = {
+  uFaceColor:   { value: new THREE.Color(0x080808) },
+  uEdgeColor:   { value: new THREE.Color(0x000000) },
+  uFaceOpacity: { value: 1.0 },
+  uEdgeOpacity: { value: 0.0 },
+};
+
+const vertShader = `
+  varying vec3 vObjNormal;
+  void main() {
+    vObjNormal = normal;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+// Front-side pass: flat panels (opaque→transparent) + front curved edges (invisible→black)
+const matFront = new THREE.ShaderMaterial({
+  transparent: true,
+  depthWrite: true,
+  side: THREE.FrontSide,
+  uniforms,
+  vertexShader: vertShader,
+  fragmentShader: `
+    uniform vec3  uFaceColor;
+    uniform vec3  uEdgeColor;
+    uniform float uFaceOpacity;
+    uniform float uEdgeOpacity;
+    varying vec3  vObjNormal;
+    void main() {
+      vec3  n       = normalize(vObjNormal);
+      float axisFit = max(max(abs(n.x), abs(n.y)), abs(n.z));
+      if (abs(n.y) > 0.9) discard;
+      if (axisFit >= 0.96) {
+        if (uFaceOpacity <= 0.0) discard;
+        gl_FragColor = vec4(uFaceColor, uFaceOpacity);
+      } else {
+        if (uEdgeOpacity <= 0.0) discard;
+        gl_FragColor = vec4(uEdgeColor, uEdgeOpacity);
+      }
+    }
+  `
+});
+
+// Back-side pass: ONLY curved edges — reveals back edges through transparent front faces.
+// Flat panels are always discarded here so interior walls never bleed through.
+const matBack = new THREE.ShaderMaterial({
+  transparent: true,
+  depthWrite: false,
+  side: THREE.BackSide,
+  uniforms,
+  vertexShader: vertShader,
+  fragmentShader: `
+    uniform vec3  uEdgeColor;
+    uniform float uEdgeOpacity;
+    varying vec3  vObjNormal;
+    void main() {
+      vec3  n       = normalize(vObjNormal);
+      float axisFit = max(max(abs(n.x), abs(n.y)), abs(n.z));
+      // Only render curved edge regions — never flat panels or top/bottom
+      if (axisFit >= 0.96) discard;
+      if (abs(n.y) > 0.9)  discard;
+      if (uEdgeOpacity <= 0.0) discard;
+      gl_FragColor = vec4(uEdgeColor, uEdgeOpacity);
+    }
+  `
+});
+
+const geo      = new RoundedBoxGeometry(3.2, 1.6, 1.6, 8, 0.22);
+const meshBack = new THREE.Mesh(geo, matBack);
+const mesh     = new THREE.Mesh(geo, matFront);
+
+// Back pass renders first so front edges occlude back edges correctly
+meshBack.renderOrder = 0;
+mesh.renderOrder     = 1;
+
+scene.add(meshBack);
+scene.add(mesh);
+
+// ── Helpers ───────────────────────────────────────────────
+function smoothstep(t) {
+  t = Math.max(0, Math.min(1, t));
+  return t * t * (3 - 2 * t);
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// ── Rotation state ────────────────────────────────────────
+const clock = new THREE.Clock();
+let rotY = 0, rotX = 0, rotZ = 0;
+
+// Capture the rotation state at the moment each phase transition fires
+// so we can blend smoothly rather than snapping axes
+let capturedX = 0, capturedZ = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const t = clock.getElapsedTime() % T_LOOP;
+
+  // ─ Phase 1: solid brick, Y-axis spin ─────────────────
+  if (t < T_MORPH_IN) {
+    rotY += 0.018;
+    rotX  = 0;
+    rotZ  = 0;
+    capturedX = 0;
+    capturedZ = 0;
+
+    mesh.scale.x                   = 1.0;
+    uniforms.uFaceOpacity.value    = 1.0;
+    uniforms.uEdgeOpacity.value    = 0.0;
+  }
+
+  // ─ Phase 2: morph → cube ─────────────────────────────
+  else if (t < T_CUBE) {
+    const p = smoothstep((t - T_MORPH_IN) / (T_CUBE - T_MORPH_IN));
+
+    rotY += 0.018;
+
+    mesh.scale.x                   = lerp(1.0, 0.5, p);
+    uniforms.uFaceOpacity.value    = lerp(1.0, 0.0, p);
+    uniforms.uEdgeOpacity.value    = lerp(0.0, 1.0, p);
+  }
+
+  // ─ Phase 3: wireframe cube, multi-axis tumble ─────────
+  else if (t < T_MORPH_OUT) {
+    rotY += 0.013;
+    rotX += 0.009;
+    rotZ += 0.006;
+    capturedX = rotX;
+    capturedZ = rotZ;
+
+    mesh.scale.x                   = 0.5;
+    uniforms.uFaceOpacity.value    = 0.0;
+    uniforms.uEdgeOpacity.value    = 1.0;
+  }
+
+  // ─ Phase 4: morph back to solid brick ────────────────
+  else {
+    const p = smoothstep((t - T_MORPH_OUT) / (T_LOOP - T_MORPH_OUT));
+
+    rotY += 0.013 + (0.018 - 0.013) * p;
+    rotX  = capturedX * (1 - p);
+    rotZ  = capturedZ * (1 - p);
+
+    mesh.scale.x                   = lerp(0.5, 1.0, p);
+    uniforms.uFaceOpacity.value    = lerp(0.0, 1.0, p);
+    uniforms.uEdgeOpacity.value    = lerp(1.0, 0.0, p);
+  }
+
+  // Keep both meshes in sync
+  meshBack.scale.x    = mesh.scale.x;
+  meshBack.rotation.x = mesh.rotation.x = rotX;
+  meshBack.rotation.y = mesh.rotation.y = rotY;
+  meshBack.rotation.z = mesh.rotation.z = rotZ;
+
+  renderer.render(scene, camera);
+}
+
+animate();
+</script>
+
+</body>
+</html>
