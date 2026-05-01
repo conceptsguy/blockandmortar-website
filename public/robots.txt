@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blockandmortar.ai/sitemap-index.xml
