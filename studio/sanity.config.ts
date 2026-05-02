@@ -6,9 +6,9 @@ import { schemaTypes } from './schemas';
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? 'brri6o86';
 const dataset   = process.env.SANITY_STUDIO_DATASET   ?? 'production';
-// Use localhost:4321 when developing locally, the live site in production
+// Preview URL: localhost in dev, Vercel site in production
 const previewOrigin = process.env.SANITY_STUDIO_PREVIEW_URL
-  ?? (process.env.NODE_ENV === 'production' ? 'https://blockandmortar.ai' : 'http://localhost:4321');
+  ?? (process.env.NODE_ENV === 'production' ? 'https://blockandmortar-website.vercel.app' : 'http://localhost:4321');
 
 export default defineConfig({
   name: 'block-and-mortar',
