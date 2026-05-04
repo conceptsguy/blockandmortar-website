@@ -5,7 +5,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set(
     'Content-Security-Policy',
-    "frame-ancestors 'self' https://*.sanity.studio http://localhost:3333",
+    "frame-ancestors 'self' https://*.sanity.studio https://sanity.studio https://*.sanity.io http://localhost:3333",
   );
   return response;
 });
