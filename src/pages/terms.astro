@@ -1,9 +1,12 @@
 ---
-import { sanityClient } from '../lib/sanity';
+import { getClient } from '../lib/sanity';
 import LegalLayout from '../layouts/LegalLayout.astro';
 import TermsPage from '../components/TermsPage';
 
-const data = await sanityClient.fetch(
+const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
+const client = getClient(isDraftMode);
+
+const data = await client.fetch(
   `*[_type == "legalPage" && pageKey == "terms"][0]{
     lastUpdated,
     subtitle,

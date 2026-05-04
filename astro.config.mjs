@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     sitemap(),
   ],
-  output: 'static',
+  output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },
   }),

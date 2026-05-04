@@ -1,10 +1,13 @@
 ---
-import { sanityClient } from '../lib/sanity';
+import { getClient } from '../lib/sanity';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import App from '../components/App';
 
+const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
+const client = getClient(isDraftMode);
+
 const [homeData, testimonials] = await Promise.all([
-  sanityClient.fetch(
+  client.fetch(
     `*[_type == "homePage" && _id == "singleton-homePage"][0]{
       heroHeading,
       heroSubheading,
@@ -14,7 +17,7 @@ const [homeData, testimonials] = await Promise.all([
       verticals[]{ key, title, meta }
     }`
   ),
-  sanityClient.fetch(
+  client.fetch(
     `*[_type == "testimonial"] | order(order asc){
       quote,
       personName,

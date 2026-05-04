@@ -1,12 +1,16 @@
 ---
-import { sanityClient } from '../lib/sanity';
+import { getClient, sanityClient } from '../lib/sanity';
 import { createImageUrlBuilder } from '@sanity/image-url';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TeamPage from '../components/TeamPage';
 
+const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
+const client = getClient(isDraftMode);
+
+// Image builder only needs projectId/dataset — use the base client for config
 const builder = createImageUrlBuilder(sanityClient);
 
-const rawMembers = await sanityClient.fetch(
+const rawMembers = await client.fetch(
   `*[_type == "teamMember"] | order(order asc){
     name, role, initials, tint, photo, bio, order
   }`
