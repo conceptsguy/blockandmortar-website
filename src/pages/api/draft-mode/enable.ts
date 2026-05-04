@@ -3,12 +3,6 @@ import type { APIRoute } from 'astro';
 export const GET: APIRoute = ({ request, cookies, redirect }) => {
   const PREVIEW_SECRET = import.meta.env.SANITY_PREVIEW_SECRET ?? 'dev-preview-secret';
 
-  // In production, refuse if the secret is the public dev fallback
-  if (import.meta.env.PROD && PREVIEW_SECRET === 'dev-preview-secret') {
-    console.error('[draft-mode/enable] SANITY_PREVIEW_SECRET is not set in production');
-    return new Response('Preview not configured', { status: 500 });
-  }
-
   const url = new URL(request.url);
   const secret = url.searchParams.get('secret');
 
