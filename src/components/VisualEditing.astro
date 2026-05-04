@@ -1,12 +1,12 @@
 ---
-// Activates Sanity's click-to-edit overlays when the site is loaded inside the
-// Presentation tool iframe with the draft-mode cookie set.
-// Has zero effect on normal page visits.
+// Only render when in draft mode — the server checks the cookie so we avoid
+// a client-side race where the dynamic import completes after the Studio's
+// comlink handshake has already timed out.
+const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
 ---
-<script>
-  if (document.cookie.split(';').some(c => c.trim() === 'sanity-preview=true')) {
-    import('@sanity/visual-editing').then(({ enableVisualEditing }) => {
-      enableVisualEditing();
-    });
-  }
-</script>
+{isDraftMode && (
+  <script>
+    import { enableVisualEditing } from '@sanity/visual-editing';
+    enableVisualEditing();
+  </script>
+)}
