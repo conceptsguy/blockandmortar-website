@@ -27,7 +27,7 @@ export const previewClient = projectId
       dataset,
       apiVersion: '2024-01-01',
       useCdn: false,
-      perspective: 'previewDrafts',
+      perspective: 'published',
       stega: {
         enabled: true,
         studioUrl,

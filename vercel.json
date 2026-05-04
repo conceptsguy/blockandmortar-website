@@ -1,19 +1,4 @@
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "frame-ancestors 'self' https://*.sanity.studio http://localhost:3333"
-        }
-      ]
-    }
-  ],
   "redirects": [
     { "source": "/index.html",         "destination": "/",             "permanent": true },
     { "source": "/team.html",          "destination": "/team",         "permanent": true },

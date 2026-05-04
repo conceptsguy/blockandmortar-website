@@ -8,7 +8,7 @@ const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? 'brri6o86';
 const dataset   = process.env.SANITY_STUDIO_DATASET   ?? 'production';
 // Preview URL: localhost in dev, Vercel site in production
 const previewOrigin = process.env.SANITY_STUDIO_PREVIEW_URL
-  ?? (process.env.NODE_ENV === 'production' ? 'https://blockandmortar-website.vercel.app' : 'http://localhost:4321');
+  ?? (process.env.NODE_ENV === 'production' ? 'https://blockandmortar-web.vercel.app' : 'http://localhost:4321');
 
 // Shared secret that the frontend validates when enabling draft mode.
 // In local dev the fallback 'dev-preview-secret' matches the frontend fallback,

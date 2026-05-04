@@ -1,12 +1,6 @@
 ---
-// Only render when in draft mode — the server checks the cookie so we avoid
-// a client-side race where the dynamic import completes after the Studio's
-// comlink handshake has already timed out.
-const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
 ---
-{isDraftMode && (
-  <script>
-    import { enableVisualEditing } from '@sanity/visual-editing';
-    enableVisualEditing();
-  </script>
-)}
+<script>
+  import { enableVisualEditing } from '@sanity/visual-editing';
+  enableVisualEditing();
+</script>
