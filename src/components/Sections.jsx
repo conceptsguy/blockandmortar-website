@@ -541,18 +541,20 @@ export function TrustedBy() {
 // PromptSection
 // ---------------------------------------------------------------------------
 
-export function PromptSection() {
+export function PromptSection({ heading, headingEm, description }) {
   return (
     <section className="section" id="prompt" style={{ paddingTop: 100, paddingBottom: 80 }}>
       <div className="container">
         <div className="section-head">
           <div>
             <div className="eyebrow"><span className="dot" /> Prompt → estimate</div>
-            <h2>A sentence becomes <em>a defensible pro forma.</em></h2>
+            <h2>
+              {heading ?? 'A sentence becomes'}{' '}
+              <em>{headingEm ?? 'a defensible pro forma.'}</em>
+            </h2>
           </div>
           <div className="desc">
-            Describe the project. Block &amp; Mortar returns a buildable massing, schedule, and cost
-            breakdown; updated live as every stakeholder weighs in.
+            {description ?? 'Describe the project. Block & Mortar returns a buildable massing, schedule, and cost breakdown; updated live as every stakeholder weighs in.'}
           </div>
         </div>
         <PromptEstimate />
@@ -599,7 +601,7 @@ const FALLBACK_STEPS = [
   { number: '04', title: 'Finance + Operations',   body: 'Benchmark actuals against pro forma in real time. Each completed project sharpens the model for the next. A compounding feedback loop.' },
 ];
 
-export function Steps({ steps = [] }) {
+export function Steps({ heading, headingEm, description, steps = [] }) {
   const items = steps.length > 0 ? steps : FALLBACK_STEPS;
   return (
     <section className="section" id="how">
@@ -607,11 +609,13 @@ export function Steps({ steps = [] }) {
         <div className="section-head">
           <div>
             <div className="eyebrow"><span className="dot" /> How it works</div>
-            <h2>One platform for <em>every stage of the development lifecycle.</em></h2>
+            <h2>
+              {heading ?? 'One platform for'}{' '}
+              <em>{headingEm ?? 'every stage of the development lifecycle.'}</em>
+            </h2>
           </div>
           <div className="desc">
-            A developer's time gets spent analyzing, planning, coordinating, and reconciling.
-            Block &amp; Mortar compresses each of those into a live, connected model.
+            {description ?? "A developer's time gets spent analyzing, planning, coordinating, and reconciling. Block & Mortar compresses each of those into a live, connected model."}
           </div>
         </div>
         <div className="steps">
@@ -633,18 +637,20 @@ export function Steps({ steps = [] }) {
 // Bento
 // ---------------------------------------------------------------------------
 
-export function Bento() {
+export function Bento({ heading, headingEm, description }) {
   return (
     <section className="section" id="bento">
       <div className="container">
         <div className="section-head">
           <div>
             <div className="eyebrow"><span className="dot" /> Platform</div>
-            <h2>Blocks that stack into <em>a defensible estimate.</em></h2>
+            <h2>
+              {heading ?? 'Blocks that stack into'}{' '}
+              <em>{headingEm ?? 'a defensible estimate.'}</em>
+            </h2>
           </div>
           <div className="desc">
-            Each capability is a discrete building block. Composed, swapped, and re-estimated
-            as projects evolve. No black box.
+            {description ?? 'Each capability is a discrete building block. Composed, swapped, and re-estimated as projects evolve. No black box.'}
           </div>
         </div>
 
@@ -739,7 +745,7 @@ const VERTICAL_LABELS = {
 
 const VERT_STAMPS = [240, 327, 414, 501, 588];
 
-export function Verticals({ verticals = [] }) {
+export function Verticals({ heading, headingEm, description, verticals = [] }) {
   const cards = (verticals.length > 0 ? verticals : FALLBACK_VERTICALS).map((v, i) => ({
     k:     v.key,
     title: v.title,
@@ -753,11 +759,13 @@ export function Verticals({ verticals = [] }) {
         <div className="section-head">
           <div>
             <div className="eyebrow"><span className="dot" /> Verticals</div>
-            <h2>Built for the projects <em>you actually build.</em></h2>
+            <h2>
+              {heading ?? 'Built for the projects'}{' '}
+              <em>{headingEm ?? 'you actually build.'}</em>
+            </h2>
           </div>
           <div className="desc">
-            Tuned cost libraries, code sets, and schedule templates per vertical — so the first
-            estimate is already in the right ballpark.
+            {description ?? 'Tuned cost libraries, code sets, and schedule templates per vertical — so the first estimate is already in the right ballpark.'}
           </div>
         </div>
 
@@ -785,13 +793,16 @@ export function Verticals({ verticals = [] }) {
 // CTA
 // ---------------------------------------------------------------------------
 
-export function CTA({ heading, description }) {
+export function CTA({ heading, headingEm, description }) {
   return (
     <section className="section" id="cta" style={{ paddingBottom: 80 }}>
       <div className="container">
         <div className="cta">
           <div className="eyebrow" style={{ position: 'relative' }}><span className="dot" /> Request a demo</div>
-          <h2>{heading ?? <>Model your next project <em>in minutes.</em></>}</h2>
+          <h2>
+            {heading ?? 'Model your next project'}{' '}
+            <em>{headingEm ?? 'in minutes.'}</em>
+          </h2>
           <p>{description ?? "Bring your toughest deal. We'll show you a live estimate, a defensible schedule, and the path from prompt to pro forma in one working session."}</p>
           <div className="row">
             <a href="#" onClick={openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>

@@ -78,7 +78,14 @@ function hoverFor(target) {
   return { x: target.x + dx, y: Math.max(4, Math.min(96, target.y + dy)) };
 }
 
-export default function CollabScene() {
+const FALLBACK_FEATURES = [
+  { title: 'Live cost deltas',    description: 'every change propagates to pro forma in seconds.' },
+  { title: 'Real-time Comments',  description: 'drop notes directly on a bids, proformas, or projects.' },
+  { title: 'Role-aware views',    description: 'lenders see risk, GCs see schedule, owners see returns.' },
+];
+
+export default function CollabScene({ heading, headingEm, description, features = [] }) {
+  const featureList = features.length > 0 ? features : FALLBACK_FEATURES;
   const [step, setStep] = useState(0);
   const [idleIdx, setIdleIdx] = useState({ maya: 0, jordan: 0, tia: 0 });
   const [phase, setPhase] = useState('enter');
@@ -132,15 +139,20 @@ export default function CollabScene() {
       <div className="collab-inner">
         <div className="collab-copy">
           <div className="eyebrow"><span className="dot" /> Real-time collaboration</div>
-          <h3>Every stakeholder, <em>in the same model, at the same moment.</em></h3>
+          <h3>
+            {heading ?? 'Every stakeholder,'}{' '}
+            <em>{headingEm ?? 'in the same model, at the same moment.'}</em>
+          </h3>
           <p style={{ color: 'var(--ink-2)', fontSize: 16, marginTop: 14, maxWidth: '48ch' }}>
-            Owners, GCs, designers, and lenders comment on the same source of truth.
-            Estimates update as the model changes; not three weeks after.
+            {description ?? 'Owners, GCs, designers, and lenders comment on the same source of truth. Estimates update as the model changes; not three weeks after.'}
           </p>
           <ul>
-            <li><span className="check">✓</span><span><b>Live cost deltas</b>  every change propagates to pro forma in seconds.</span></li>
-            <li><span className="check">✓</span><span><b>Real-time Comments</b>   drop notes directly on a bids, proformas, or projects.</span></li>
-            <li><span className="check">✓</span><span><b>Role-aware views</b>  lenders see risk, GCs see schedule, owners see returns.</span></li>
+            {featureList.map(f => (
+              <li key={f.title}>
+                <span className="check">✓</span>
+                <span><b>{f.title}</b>{'  '}{f.description}</span>
+              </li>
+            ))}
           </ul>
         </div>
 

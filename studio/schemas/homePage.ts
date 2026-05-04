@@ -12,35 +12,60 @@ export const homePage = defineType({
     // -------------------------------------------------------------------------
     defineField({
       name: 'heroHeading',
-      title: 'Hero heading',
+      title: 'Hero — heading',
       type: 'string',
-      description: 'Large h1 in the hero section.',
       validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'heroSubheading',
-      title: 'Hero subheading',
+      title: 'Hero — subheading',
       type: 'string',
-      description: 'Smaller line beneath the heading.',
     }),
+
     // -------------------------------------------------------------------------
-    // CTA section
+    // Prompt section ("A sentence becomes a defensible pro forma.")
     // -------------------------------------------------------------------------
     defineField({
-      name: 'ctaHeading',
-      title: 'CTA heading',
+      name: 'promptHeading',
+      title: 'Prompt section — heading (plain part)',
       type: 'string',
-      description: 'Heading in the "Request a demo" section at the bottom.',
+      description: 'e.g. "A sentence becomes"',
     }),
     defineField({
-      name: 'ctaDescription',
-      title: 'CTA description',
+      name: 'promptHeadingEm',
+      title: 'Prompt section — heading (italic part)',
+      type: 'string',
+      description: 'e.g. "a defensible pro forma."',
+    }),
+    defineField({
+      name: 'promptDescription',
+      title: 'Prompt section — description',
       type: 'text',
       rows: 3,
     }),
+
     // -------------------------------------------------------------------------
+    // Steps section ("One platform for every stage…")
+    // -------------------------------------------------------------------------
+    defineField({
+      name: 'stepsHeading',
+      title: 'Steps section — heading (plain part)',
+      type: 'string',
+      description: 'e.g. "One platform for"',
+    }),
+    defineField({
+      name: 'stepsHeadingEm',
+      title: 'Steps section — heading (italic part)',
+      type: 'string',
+      description: 'e.g. "every stage of the development lifecycle."',
+    }),
+    defineField({
+      name: 'stepsDescription',
+      title: 'Steps section — description',
+      type: 'text',
+      rows: 3,
+    }),
     // Steps — "How it works" (always exactly 4)
-    // -------------------------------------------------------------------------
     defineField({
       name: 'steps',
       title: 'How it works — steps',
@@ -81,9 +106,100 @@ export const homePage = defineType({
         }),
       ],
     }),
+
+    // -------------------------------------------------------------------------
+    // Bento / Platform section
+    // -------------------------------------------------------------------------
+    defineField({
+      name: 'bentoHeading',
+      title: 'Platform section — heading (plain part)',
+      type: 'string',
+      description: 'e.g. "Blocks that stack into"',
+    }),
+    defineField({
+      name: 'bentoHeadingEm',
+      title: 'Platform section — heading (italic part)',
+      type: 'string',
+      description: 'e.g. "a defensible estimate."',
+    }),
+    defineField({
+      name: 'bentoDescription',
+      title: 'Platform section — description',
+      type: 'text',
+      rows: 3,
+    }),
+
+    // -------------------------------------------------------------------------
+    // Collab section
+    // -------------------------------------------------------------------------
+    defineField({
+      name: 'collabHeading',
+      title: 'Collab section — heading (plain part)',
+      type: 'string',
+      description: 'e.g. "Every stakeholder,"',
+    }),
+    defineField({
+      name: 'collabHeadingEm',
+      title: 'Collab section — heading (italic part)',
+      type: 'string',
+      description: 'e.g. "in the same model, at the same moment."',
+    }),
+    defineField({
+      name: 'collabDescription',
+      title: 'Collab section — description',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'collabFeatures',
+      title: 'Collab section — feature list',
+      type: 'array',
+      description: 'Exactly 3 feature bullets.',
+      validation: Rule => Rule.min(3).max(3),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'feature',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Feature title (bold)',
+              type: 'string',
+              validation: Rule => Rule.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Feature description',
+              type: 'string',
+              validation: Rule => Rule.required(),
+            }),
+          ],
+          preview: { select: { title: 'title' } },
+        }),
+      ],
+    }),
+
     // -------------------------------------------------------------------------
     // Verticals (always exactly 5)
     // -------------------------------------------------------------------------
+    defineField({
+      name: 'verticalsHeading',
+      title: 'Verticals section — heading (plain part)',
+      type: 'string',
+      description: 'e.g. "Built for the projects"',
+    }),
+    defineField({
+      name: 'verticalsHeadingEm',
+      title: 'Verticals section — heading (italic part)',
+      type: 'string',
+      description: 'e.g. "you actually build."',
+    }),
+    defineField({
+      name: 'verticalsDescription',
+      title: 'Verticals section — description',
+      type: 'text',
+      rows: 3,
+    }),
     defineField({
       name: 'verticals',
       title: 'Verticals',
@@ -129,6 +245,28 @@ export const homePage = defineType({
           },
         }),
       ],
+    }),
+
+    // -------------------------------------------------------------------------
+    // CTA section
+    // -------------------------------------------------------------------------
+    defineField({
+      name: 'ctaHeading',
+      title: 'CTA — heading (plain part)',
+      type: 'string',
+      description: 'e.g. "Model your next project"',
+    }),
+    defineField({
+      name: 'ctaHeadingEm',
+      title: 'CTA — heading (italic part)',
+      type: 'string',
+      description: 'e.g. "in minutes."',
+    }),
+    defineField({
+      name: 'ctaDescription',
+      title: 'CTA — description',
+      type: 'text',
+      rows: 3,
     }),
   ],
 });

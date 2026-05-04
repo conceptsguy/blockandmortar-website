@@ -11,10 +11,27 @@ const [homeData, testimonials] = await Promise.all([
     `*[_type == "homePage" && _id == "singleton-homePage"][0]{
       heroHeading,
       heroSubheading,
-      ctaHeading,
-      ctaDescription,
+      promptHeading,
+      promptHeadingEm,
+      promptDescription,
+      stepsHeading,
+      stepsHeadingEm,
+      stepsDescription,
       steps[]{ number, title, body },
-      verticals[]{ key, title, meta }
+      bentoHeading,
+      bentoHeadingEm,
+      bentoDescription,
+      collabHeading,
+      collabHeadingEm,
+      collabDescription,
+      collabFeatures[]{ title, description },
+      verticalsHeading,
+      verticalsHeadingEm,
+      verticalsDescription,
+      verticals[]{ key, title, meta },
+      ctaHeading,
+      ctaHeadingEm,
+      ctaDescription
     }`
   ),
   client.fetch(
@@ -51,10 +68,27 @@ const orgSchema = {
   <App
     heroHeading={homeData?.heroHeading}
     heroSubheading={homeData?.heroSubheading}
-    ctaHeading={homeData?.ctaHeading}
-    ctaDescription={homeData?.ctaDescription}
+    promptHeading={homeData?.promptHeading}
+    promptHeadingEm={homeData?.promptHeadingEm}
+    promptDescription={homeData?.promptDescription}
+    stepsHeading={homeData?.stepsHeading}
+    stepsHeadingEm={homeData?.stepsHeadingEm}
+    stepsDescription={homeData?.stepsDescription}
     steps={homeData?.steps ?? []}
+    bentoHeading={homeData?.bentoHeading}
+    bentoHeadingEm={homeData?.bentoHeadingEm}
+    bentoDescription={homeData?.bentoDescription}
+    collabHeading={homeData?.collabHeading}
+    collabHeadingEm={homeData?.collabHeadingEm}
+    collabDescription={homeData?.collabDescription}
+    collabFeatures={homeData?.collabFeatures ?? []}
+    verticalsHeading={homeData?.verticalsHeading}
+    verticalsHeadingEm={homeData?.verticalsHeadingEm}
+    verticalsDescription={homeData?.verticalsDescription}
     verticals={homeData?.verticals ?? []}
+    ctaHeading={homeData?.ctaHeading}
+    ctaHeadingEm={homeData?.ctaHeadingEm}
+    ctaDescription={homeData?.ctaDescription}
     testimonials={testimonials ?? []}
     client:only="react"
   />
