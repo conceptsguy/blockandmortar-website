@@ -1,46 +1,16 @@
 ---
-import { getClient } from '../lib/sanity';
+import { loadQuery, setServerClient } from '../lib/loader';
+import { previewClient, sanityClient } from '../lib/sanity';
+import { HOME_QUERY, TESTIMONIALS_QUERY } from '../lib/queries';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import App from '../components/App';
 
 const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
-const client = getClient(isDraftMode);
+setServerClient(isDraftMode ? previewClient : sanityClient);
 
-const [homeData, testimonials] = await Promise.all([
-  client.fetch(
-    `*[_type == "homePage" && _id == "singleton-homePage"][0]{
-      heroHeading,
-      heroSubheading,
-      promptHeading,
-      promptHeadingEm,
-      promptDescription,
-      stepsHeading,
-      stepsHeadingEm,
-      stepsDescription,
-      steps[]{ number, title, body },
-      bentoHeading,
-      bentoHeadingEm,
-      bentoDescription,
-      collabHeading,
-      collabHeadingEm,
-      collabDescription,
-      collabFeatures[]{ title, description },
-      verticalsHeading,
-      verticalsHeadingEm,
-      verticalsDescription,
-      verticals[]{ key, title, meta },
-      ctaHeading,
-      ctaHeadingEm,
-      ctaDescription
-    }`
-  ),
-  client.fetch(
-    `*[_type == "testimonial"] | order(order asc){
-      quote,
-      personName,
-      personTitle
-    }`
-  ),
+const [homeInitial, testimonialsInitial] = await Promise.all([
+  loadQuery(HOME_QUERY),
+  loadQuery(TESTIMONIALS_QUERY),
 ]);
 
 const orgSchema = {
@@ -66,30 +36,9 @@ const orgSchema = {
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(orgSchema)} />
   <App
-    heroHeading={homeData?.heroHeading}
-    heroSubheading={homeData?.heroSubheading}
-    promptHeading={homeData?.promptHeading}
-    promptHeadingEm={homeData?.promptHeadingEm}
-    promptDescription={homeData?.promptDescription}
-    stepsHeading={homeData?.stepsHeading}
-    stepsHeadingEm={homeData?.stepsHeadingEm}
-    stepsDescription={homeData?.stepsDescription}
-    steps={homeData?.steps ?? []}
-    bentoHeading={homeData?.bentoHeading}
-    bentoHeadingEm={homeData?.bentoHeadingEm}
-    bentoDescription={homeData?.bentoDescription}
-    collabHeading={homeData?.collabHeading}
-    collabHeadingEm={homeData?.collabHeadingEm}
-    collabDescription={homeData?.collabDescription}
-    collabFeatures={homeData?.collabFeatures ?? []}
-    verticalsHeading={homeData?.verticalsHeading}
-    verticalsHeadingEm={homeData?.verticalsHeadingEm}
-    verticalsDescription={homeData?.verticalsDescription}
-    verticals={homeData?.verticals ?? []}
-    ctaHeading={homeData?.ctaHeading}
-    ctaHeadingEm={homeData?.ctaHeadingEm}
-    ctaDescription={homeData?.ctaDescription}
-    testimonials={testimonials ?? []}
+    homeInitial={homeInitial}
+    testimonialsInitial={testimonialsInitial}
+    isDraftMode={isDraftMode}
     client:only="react"
   />
 </BaseLayout>

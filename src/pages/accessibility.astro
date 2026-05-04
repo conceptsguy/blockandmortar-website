@@ -1,35 +1,19 @@
 ---
-import { getClient } from '../lib/sanity';
+import { loadQuery, setServerClient } from '../lib/loader';
+import { previewClient, sanityClient } from '../lib/sanity';
+import { LEGAL_QUERY } from '../lib/queries';
 import LegalLayout from '../layouts/LegalLayout.astro';
 import AccessibilityPage from '../components/AccessibilityPage';
 
 const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
-const client = getClient(isDraftMode);
+setServerClient(isDraftMode ? previewClient : sanityClient);
 
-const data = await client.fetch(
-  `*[_type == "legalPage" && pageKey == "accessibility"][0]{
-    lastUpdated,
-    subtitle,
-    leadParagraph,
-    sections[]{
-      "id": id.current,
-      num,
-      title,
-      body
-    }
-  }`
-);
+const legalInitial = await loadQuery(LEGAL_QUERY, { pageKey: 'accessibility' });
 ---
 
 <LegalLayout
   title="Accessibility Statement — Block and Mortar"
   description="Block & Mortar's commitment to WCAG 2.2 AA accessibility, compatible assistive technology, and how to report issues."
 >
-  <AccessibilityPage
-    sections={data?.sections ?? []}
-    lastUpdated={data?.lastUpdated}
-    subtitle={data?.subtitle}
-    leadParagraph={data?.leadParagraph}
-    client:only="react"
-  />
+  <AccessibilityPage legalInitial={legalInitial} isDraftMode={isDraftMode} client:only="react" />
 </LegalLayout>

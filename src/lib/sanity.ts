@@ -38,3 +38,20 @@ export const previewClient = projectId
 export function getClient(isDraftMode: boolean) {
   return isDraftMode ? previewClient : sanityClient;
 }
+
+// Browser-side live client — used by useLiveMode() in React components.
+// Uses previewDrafts perspective so edits appear before publishing.
+// Works in-browser because the editor's Sanity session cookies are sent automatically.
+export const liveClient = projectId
+  ? createClient({
+      projectId,
+      dataset,
+      apiVersion: '2024-01-01',
+      useCdn: false,
+      perspective: 'previewDrafts',
+      stega: {
+        enabled: true,
+        studioUrl,
+      },
+    })
+  : null;

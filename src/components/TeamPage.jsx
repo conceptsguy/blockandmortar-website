@@ -1,9 +1,11 @@
+import { useQuery, useLiveMode } from '../lib/loader';
+import { liveClient } from '../lib/sanity';
+import { TEAM_QUERY } from '../lib/queries';
 import { Nav, Footer } from './Sections';
 import DemoModal from './DemoModal';
 
-// CareerModal was referenced in the original team.jsx but never implemented.
-// Stubbed here — wire a real implementation when the careers section is built.
-function CareerModal() {
+function LiveMode() {
+  useLiveMode({ client: liveClient });
   return null;
 }
 
@@ -31,20 +33,22 @@ function TeamGrid({ members }) {
       <div className="container">
         <div className="team-grid">
           {members.map(m => (
-            <article className="team-card" key={m.name}>
+            <article className="team-card" key={m._id ?? m.name}>
               <div
-                className="team-avatar has-photo"
+                className={`team-avatar${m.photo ? ' has-photo' : ''}`}
                 style={{
                   borderColor: `${m.tint}55`,
                   boxShadow: `inset 0 -80px 80px -40px rgba(11,13,16,0.55), 0 0 0 1px ${m.tint}22`,
                 }}
               >
-                <img
-                  src={m.photo}
-                  alt={`Portrait of ${m.name}`}
-                  className="team-avatar-photo"
-                  loading="lazy"
-                />
+                {m.photo && (
+                  <img
+                    src={m.photo}
+                    alt={`Portrait of ${m.name}`}
+                    className="team-avatar-photo"
+                    loading="lazy"
+                  />
+                )}
                 <div
                   className="team-avatar-tint"
                   style={{
@@ -133,17 +137,19 @@ function TeamApply() {
   );
 }
 
-export default function TeamPage({ members = [] }) {
+export default function TeamPage({ teamInitial, isDraftMode = false }) {
+  const { data: members } = useQuery(TEAM_QUERY, {}, { initial: teamInitial });
+
   return (
     <>
+      {isDraftMode && liveClient && <LiveMode />}
       <Nav />
       <TeamHero />
-      <TeamGrid members={members} />
+      <TeamGrid members={members ?? []} />
       <TeamStory />
       <TeamApply />
       <Footer />
       <DemoModal />
-      <CareerModal />
     </>
   );
 }
