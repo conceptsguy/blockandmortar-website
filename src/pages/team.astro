@@ -32,6 +32,7 @@ const teamSchema = {
 <BaseLayout
   title="The Team — Block and Mortar"
   description="Meet the Block & Mortar founding team — operators, builders, designers, and engineers who've lived the problems we now build against."
+  bodyClass="team-page"
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(teamSchema)} />
   <TeamPage teamInitial={teamInitial} isDraftMode={isDraftMode} client:only="react" />
