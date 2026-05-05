@@ -12,6 +12,8 @@ export function openDemoModal(e) {
 export default function DemoModal() {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     first: '', last: '', email: '', verticals: [], role: '', companySize: ''
   });
@@ -45,9 +47,23 @@ export default function DemoModal() {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setSubmitted(true);
+    } catch {
+      setError('Something went wrong — please email us directly at info@blockandmortar.ai');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const valid = form.first.trim() && form.last.trim() && form.email.trim() && form.role;
@@ -153,8 +169,9 @@ export default function DemoModal() {
               </label>
 
               <div className="dm-actions">
-                <button type="submit" className={'btn btn-primary' + (valid ? '' : ' is-disabled')} disabled={!valid}>
-                  Submit <span className="arrow">→</span>
+                {error && <p className="dm-error">{error}</p>}
+                <button type="submit" className={'btn btn-primary' + (valid && !loading ? '' : ' is-disabled')} disabled={!valid || loading}>
+                  {loading ? 'Sending…' : <><span>Submit</span> <span className="arrow">→</span></>}
                 </button>
                 <div className="dm-contact">
                   <span className="dm-contact-k">info@blockandmortar.ai</span>
