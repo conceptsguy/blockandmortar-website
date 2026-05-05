@@ -18,6 +18,8 @@ export const LEGAL_QUERY = `*[_type == "legalPage" && pageKey == $pageKey][0]{
 export const HOME_QUERY = `*[_type == "homePage" && _id == "singleton-homePage"][0]{
   heroHeading,
   heroSubheading,
+  testimonials[]{ quote, personName, personTitle },
+  "logos": logos[]{ alt, "src": logo.asset->url },
   promptHeading,
   promptHeadingEm,
   promptDescription,
@@ -28,6 +30,7 @@ export const HOME_QUERY = `*[_type == "homePage" && _id == "singleton-homePage"]
   bentoHeading,
   bentoHeadingEm,
   bentoDescription,
+  bentoBoxes[]{ tag, heading, description },
   collabHeading,
   collabHeadingEm,
   collabDescription,
@@ -45,4 +48,15 @@ export const TESTIMONIALS_QUERY = `*[_type == "testimonial"] | order(order asc){
   quote,
   personName,
   personTitle
+}`;
+
+export const TEAM_PAGE_QUERY = `*[_type == "teamPage" && _id == "singleton-teamPage"][0]{
+  h1,
+  subheader,
+  storyHeading,
+  storyBody,
+  visionHeading,
+  visionBody,
+  applyHeading,
+  applyBody
 }`;

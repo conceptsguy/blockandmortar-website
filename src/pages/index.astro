@@ -1,17 +1,14 @@
 ---
 import { loadQuery, setServerClient } from '../lib/loader';
 import { previewClient, sanityClient } from '../lib/sanity';
-import { HOME_QUERY, TESTIMONIALS_QUERY } from '../lib/queries';
+import { HOME_QUERY } from '../lib/queries';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import App from '../components/App';
 
 const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
 setServerClient(isDraftMode ? previewClient : sanityClient);
 
-const [homeInitial, testimonialsInitial] = await Promise.all([
-  loadQuery(HOME_QUERY),
-  loadQuery(TESTIMONIALS_QUERY),
-]);
+const homeInitial = await loadQuery(HOME_QUERY);
 
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -37,7 +34,6 @@ const orgSchema = {
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(orgSchema)} />
   <App
     homeInitial={homeInitial}
-    testimonialsInitial={testimonialsInitial}
     isDraftMode={isDraftMode}
     client:only="react"
   />

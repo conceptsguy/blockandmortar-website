@@ -418,7 +418,7 @@ function HeroQuotes({ quotes = [] }) {
   );
 }
 
-export function Hero({ heading, subheading, testimonials = [] }) {
+export function Hero({ heading, subheading, testimonials = [], logos = [] }) {
   const properties = [
     {
       key: 'apartments',
@@ -447,13 +447,14 @@ export function Hero({ heading, subheading, testimonials = [] }) {
   ];
   const [hovered, setHovered] = useState(null);
 
-  const logos = [
-    { t: 'AON',            src: '/assets/logo-aon.png',            h: 24 },
-    { t: 'EPC Group',      src: '/assets/logo-epc.png',            h: 24 },
-    { t: 'United Rentals', src: '/assets/logo-united-rentals.png', h: 24 },
-    { t: 'GM',             src: '/assets/logo-gm.png',             h: 24 },
-    { t: 'Molzer',         src: '/assets/logo-molzer.png',         h: 24 },
+  const FALLBACK_LOGOS = [
+    { alt: 'AON',            src: '/assets/logo-aon.png' },
+    { alt: 'EPC Group',      src: '/assets/logo-epc.png' },
+    { alt: 'United Rentals', src: '/assets/logo-united-rentals.png' },
+    { alt: 'GM',             src: '/assets/logo-gm.png' },
+    { alt: 'Molzer',         src: '/assets/logo-molzer.png' },
   ];
+  const displayLogos = logos.length > 0 ? logos : FALLBACK_LOGOS;
 
   return (
     <section className="hero">
@@ -514,13 +515,12 @@ export function Hero({ heading, subheading, testimonials = [] }) {
             <div className="trusted-marquee-track">
               {[0, 1].map(rep => (
                 <div className="trusted-marquee-group" key={rep} aria-hidden={rep === 1 ? 'true' : undefined}>
-                  {logos.map(l => (
+                  {displayLogos.map(l => (
                     <img
-                      key={rep + '-' + l.t}
+                      key={rep + '-' + l.alt}
                       src={l.src}
-                      alt={rep === 0 ? l.t : ''}
+                      alt={rep === 0 ? l.alt : ''}
                       className="trusted-logo-img"
-                      style={{ height: l.h }}
                     />
                   ))}
                 </div>
@@ -637,7 +637,19 @@ export function Steps({ heading, headingEm, description, steps = [] }) {
 // Bento
 // ---------------------------------------------------------------------------
 
-export function Bento({ heading, headingEm, description }) {
+const FALLBACK_BOXES = [
+  { tag: 'AI ESTIMATOR',  heading: 'A prompt is enough to begin.',              description: 'Describe the building. Block & Mortar produces a buildable massing, schedule, and $-per-sqft breakdown grounded in 14 years of regional cost history.' },
+  { tag: '',              heading: 'Score sites before you tour them.',          description: '' },
+  { tag: 'PRO FORMA',     heading: 'Live yield-on-cost.',                        description: 'IRR, YoC, and DSCR recompute with every change.' },
+  { tag: 'P50',           heading: '27 mo',                                      description: 'Schedule median' },
+  { tag: 'P90',           heading: '32 mo',                                      description: 'With contingency' },
+  { tag: 'INTEGRATIONS',  heading: 'Plugs into the top AEC platforms.',          description: '' },
+  { tag: 'RISK',          heading: 'Risks surfaced early. Data not hidden.',     description: '' },
+  { tag: 'BENCHMARKING',  heading: 'Every finished project sharpens the next.',  description: '' },
+];
+
+export function Bento({ heading, headingEm, description, boxes = [] }) {
+  const b = boxes.length === 8 ? boxes : FALLBACK_BOXES;
   return (
     <section className="section" id="bento">
       <div className="container">
@@ -656,21 +668,21 @@ export function Bento({ heading, headingEm, description }) {
 
         <div className="bento">
           <div className="block b-hero">
-            <div className="tag"><span className="sq" /> AI ESTIMATOR</div>
-            <h4>A prompt is enough to begin.</h4>
-            <p>Describe the building. Block &amp; Mortar produces a buildable massing, schedule, and $-per-sqft breakdown grounded in 14 years of regional cost history.</p>
+            {b[0].tag && <div className="tag"><span className="sq" /> {b[0].tag}</div>}
+            <h4>{b[0].heading}</h4>
+            {b[0].description && <p>{b[0].description}</p>}
             <PromptInputAnim />
           </div>
 
           <div className="block b-top1">
             <GisMapAnim />
-            <h4>Score sites before you tour them.</h4>
+            <h4>{b[1].heading}</h4>
           </div>
 
           <div className="block b-mid1">
-            <div className="tag"><span className="sq" /> PRO FORMA</div>
-            <h4>Live yield-on-cost.</h4>
-            <p style={{ fontSize: 13 }}>IRR, YoC, and DSCR recompute with every change.</p>
+            {b[2].tag && <div className="tag"><span className="sq" /> {b[2].tag}</div>}
+            <h4>{b[2].heading}</h4>
+            {b[2].description && <p style={{ fontSize: 13 }}>{b[2].description}</p>}
             <div className="proforma-metrics">
               <div className="pfm">
                 <div className="pfm-k">IRR</div>
@@ -691,30 +703,30 @@ export function Bento({ heading, headingEm, description }) {
           </div>
 
           <div className="block b-mid2">
-            <div className="tag"><span className="sq" /> P50</div>
-            <h4 style={{ fontSize: 16 }}>27 mo</h4>
-            <p style={{ fontSize: 12 }}>Schedule median</p>
+            {b[3].tag && <div className="tag"><span className="sq" /> {b[3].tag}</div>}
+            <h4 style={{ fontSize: 16 }}>{b[3].heading}</h4>
+            {b[3].description && <p style={{ fontSize: 12 }}>{b[3].description}</p>}
           </div>
 
           <div className="block b-mid3">
-            <div className="tag"><span className="sq" /> P90</div>
-            <h4 style={{ fontSize: 16, color: 'var(--amber)' }}>32 mo</h4>
-            <p style={{ fontSize: 12 }}>With contingency</p>
+            {b[4].tag && <div className="tag"><span className="sq" /> {b[4].tag}</div>}
+            <h4 style={{ fontSize: 16, color: 'var(--amber)' }}>{b[4].heading}</h4>
+            {b[4].description && <p style={{ fontSize: 12 }}>{b[4].description}</p>}
           </div>
 
           <div className="block b-bot1">
-            <div className="tag"><span className="sq" /> INTEGRATIONS</div>
-            <h4>Plugs into the top AEC platforms.</h4>
+            {b[5].tag && <div className="tag"><span className="sq" /> {b[5].tag}</div>}
+            <h4>{b[5].heading}</h4>
           </div>
 
           <div className="block b-bot2">
-            <div className="tag"><span className="sq" /> RISK</div>
-            <h4>Risks surfaced early.  Data not hidden.</h4>
+            {b[6].tag && <div className="tag"><span className="sq" /> {b[6].tag}</div>}
+            <h4>{b[6].heading}</h4>
           </div>
 
           <div className="block b-bot3">
-            <div className="tag"><span className="sq" /> BENCHMARKING</div>
-            <h4>Every finished project sharpens the next.</h4>
+            {b[7].tag && <div className="tag"><span className="sq" /> {b[7].tag}</div>}
+            <h4>{b[7].heading}</h4>
             <FileStackAnim />
           </div>
         </div>

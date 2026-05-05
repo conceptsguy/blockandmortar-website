@@ -21,6 +21,41 @@ export const homePage = defineType({
       title: 'Hero — subheading',
       type: 'string',
     }),
+    defineField({
+      name: 'testimonials',
+      title: 'Hero — testimonials',
+      type: 'array',
+      description: 'Rotating quotes shown in the hero section.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'testimonial',
+          fields: [
+            defineField({ name: 'quote', title: 'Quote', type: 'text', rows: 3, validation: Rule => Rule.required() }),
+            defineField({ name: 'personName', title: 'Person name', type: 'string', validation: Rule => Rule.required() }),
+            defineField({ name: 'personTitle', title: 'Person title / company', type: 'string', validation: Rule => Rule.required() }),
+          ],
+          preview: { select: { title: 'personName', subtitle: 'personTitle' } },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'logos',
+      title: 'Trusted-by logos',
+      type: 'array',
+      description: 'Scrolling marquee logos in the hero "Trusted by" strip.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'logo',
+          fields: [
+            defineField({ name: 'alt', title: 'Company name / alt text', type: 'string', validation: Rule => Rule.required() }),
+            defineField({ name: 'logo', title: 'Logo image', type: 'image', options: { hotspot: false }, validation: Rule => Rule.required() }),
+          ],
+          preview: { select: { title: 'alt', media: 'logo' } },
+        }),
+      ],
+    }),
 
     // -------------------------------------------------------------------------
     // Prompt section ("A sentence becomes a defensible pro forma.")
@@ -127,6 +162,26 @@ export const homePage = defineType({
       title: 'Platform section — description',
       type: 'text',
       rows: 3,
+    }),
+    defineField({
+      name: 'bentoBoxes',
+      title: 'Platform — bento boxes',
+      type: 'array',
+      description:
+        'Exactly 8 boxes, in layout order: AI Estimator · GIS Map · Pro Forma · P50 · P90 · Integrations · Risk · Benchmarking. Animations stay fixed; only text is editable.',
+      validation: Rule => Rule.required().min(8).max(8),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'bentoBox',
+          fields: [
+            defineField({ name: 'tag', title: 'Tag label (e.g. AI ESTIMATOR)', type: 'string' }),
+            defineField({ name: 'heading', title: 'Heading', type: 'string', validation: Rule => Rule.required() }),
+            defineField({ name: 'description', title: 'Description (optional)', type: 'text', rows: 2 }),
+          ],
+          preview: { select: { title: 'tag', subtitle: 'heading' } },
+        }),
+      ],
     }),
 
     // -------------------------------------------------------------------------

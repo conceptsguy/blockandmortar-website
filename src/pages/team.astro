@@ -1,14 +1,17 @@
 ---
 import { loadQuery, setServerClient } from '../lib/loader';
 import { previewClient, sanityClient } from '../lib/sanity';
-import { TEAM_QUERY } from '../lib/queries';
+import { TEAM_QUERY, TEAM_PAGE_QUERY } from '../lib/queries';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TeamPage from '../components/TeamPage';
 
 const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
 setServerClient(isDraftMode ? previewClient : sanityClient);
 
-const teamInitial = await loadQuery(TEAM_QUERY);
+const [teamInitial, teamPageInitial] = await Promise.all([
+  loadQuery(TEAM_QUERY),
+  loadQuery(TEAM_PAGE_QUERY),
+]);
 
 const teamSchema = {
   '@context': 'https://schema.org',
@@ -35,5 +38,10 @@ const teamSchema = {
   bodyClass="team-page"
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(teamSchema)} />
-  <TeamPage teamInitial={teamInitial} isDraftMode={isDraftMode} client:only="react" />
+  <TeamPage
+    teamInitial={teamInitial}
+    teamPageInitial={teamPageInitial}
+    isDraftMode={isDraftMode}
+    client:only="react"
+  />
 </BaseLayout>

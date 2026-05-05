@@ -73,6 +73,17 @@ async function uploadPhoto(filename: string) {
   return { _type: 'image', asset: { _type: 'reference', _ref: asset._id } };
 }
 
+async function uploadLogoAsset(filename: string) {
+  const filePath = resolve(__dirname, '../public/assets', filename);
+  console.log(`  Uploading ${filename}…`);
+  const asset = await client.assets.upload(
+    'image',
+    createReadStream(filePath),
+    { filename },
+  );
+  return { _type: 'image', asset: { _type: 'reference', _ref: asset._id } };
+}
+
 async function seedTeam() {
   console.log('\nSeeding team members…');
 
@@ -615,15 +626,37 @@ async function seedLegal() {
   }
 }
 
-// ── Homepage + testimonials (unchanged) ──────────────────────────────────────
+// ── Homepage ─────────────────────────────────────────────────────────────────
 
 async function seedHome() {
+  console.log('\nSeeding homePage logos…');
+  const logoData = [
+    { key: 'logo-aon',            file: 'logo-aon.png',            alt: 'AON' },
+    { key: 'logo-epc',            file: 'logo-epc.png',            alt: 'EPC Group' },
+    { key: 'logo-united-rentals', file: 'logo-united-rentals.png', alt: 'United Rentals' },
+    { key: 'logo-gm',             file: 'logo-gm.png',             alt: 'GM' },
+    { key: 'logo-molzer',         file: 'logo-molzer.png',         alt: 'Molzer' },
+  ];
+  const logos = [];
+  for (const l of logoData) {
+    const logoImage = await uploadLogoAsset(l.file);
+    logos.push({ _key: l.key, alt: l.alt, logo: logoImage });
+    console.log(`  ✓ ${l.alt}`);
+  }
+
   console.log('\nSeeding homePage…');
   await client.createOrReplace({
     _id: 'singleton-homePage',
     _type: 'homePage',
     heroHeading: 'Clarity and confidence across the real estate development lifecycle.',
     heroSubheading: 'AI-powered cost intelligence on a single collaborative platform.',
+    testimonials: [
+      { _key: 'test-kevin-goebel', personName: 'Kevin Goebel', personTitle: 'CEO, Goebel Mitts Construction', quote: 'Block and Mortar allows us to collaborate with developers earlier around cost, schedule, and constructability — leading to better projects and fewer surprises during construction.' },
+      { _key: 'test-brian-heast', personName: 'Brian Heast', personTitle: 'Managing Director, Aon', quote: 'Block and Mortar gives us earlier visibility into how projects are structured during pre-construction, allowing us to identify risks sooner and align coverage strategies with real project conditions.' },
+      { _key: 'test-tony-leopold', personName: 'Tony Leopold', personTitle: 'SVP, Chief Technology & Strategy Officer, United Rentals', quote: 'With earlier access to project scope and timelines, we can plan equipment strategy more effectively and support contractors with greater efficiency from day one.' },
+      { _key: 'test-mike-mckeen', personName: 'Mike McKeen', personTitle: 'President & CEO, EPC Real Estate', quote: 'Block and Mortar creates a collaborative framework to model cost, schedule, and design together giving us greater confidence in the decisions we make moving projects forward.' },
+    ],
+    logos,
     promptHeading: 'A sentence becomes',
     promptHeadingEm: 'a defensible pro forma.',
     promptDescription: 'Describe the project. Block & Mortar returns a buildable massing, schedule, and cost breakdown; updated live as every stakeholder weighs in.',
@@ -639,6 +672,16 @@ async function seedHome() {
     bentoHeading: 'Blocks that stack into',
     bentoHeadingEm: 'a defensible estimate.',
     bentoDescription: 'Each capability is a discrete building block. Composed, swapped, and re-estimated as projects evolve. No black box.',
+    bentoBoxes: [
+      { _key: 'bento-ai',           tag: 'AI ESTIMATOR',  heading: 'A prompt is enough to begin.',             description: 'Describe the building. Block & Mortar produces a buildable massing, schedule, and $-per-sqft breakdown grounded in 14 years of regional cost history.' },
+      { _key: 'bento-gis',          tag: '',              heading: 'Score sites before you tour them.',         description: '' },
+      { _key: 'bento-proforma',     tag: 'PRO FORMA',     heading: 'Live yield-on-cost.',                       description: 'IRR, YoC, and DSCR recompute with every change.' },
+      { _key: 'bento-p50',          tag: 'P50',           heading: '27 mo',                                     description: 'Schedule median' },
+      { _key: 'bento-p90',          tag: 'P90',           heading: '32 mo',                                     description: 'With contingency' },
+      { _key: 'bento-integrations', tag: 'INTEGRATIONS',  heading: 'Plugs into the top AEC platforms.',         description: '' },
+      { _key: 'bento-risk',         tag: 'RISK',          heading: 'Risks surfaced early. Data not hidden.',    description: '' },
+      { _key: 'bento-benchmarking', tag: 'BENCHMARKING',  heading: 'Every finished project sharpens the next.', description: '' },
+    ],
     collabHeading: 'Every stakeholder,',
     collabHeadingEm: 'in the same model, at the same moment.',
     collabDescription: 'Owners, GCs, designers, and lenders comment on the same source of truth. Estimates update as the model changes; not three weeks after.',
@@ -662,18 +705,30 @@ async function seedHome() {
     ctaDescription: "Bring your toughest deal. We'll show you a live estimate, a defensible schedule, and the path from prompt to pro forma in one working session.",
   });
   console.log('  ✓ homePage');
+}
 
-  console.log('\nSeeding testimonials…');
-  const testimonials = [
-    { _id: 'testimonial-kevin-goebel', _type: 'testimonial', order: 1, personName: 'Kevin Goebel', personTitle: 'CEO, Goebel Mitts Construction', quote: 'Block and Mortar allows us to collaborate with developers earlier around cost, schedule, and constructability — leading to better projects and fewer surprises during construction.' },
-    { _id: 'testimonial-brian-heast', _type: 'testimonial', order: 2, personName: 'Brian Heast', personTitle: 'Managing Director, Aon', quote: 'Block and Mortar gives us earlier visibility into how projects are structured during pre-construction, allowing us to identify risks sooner and align coverage strategies with real project conditions.' },
-    { _id: 'testimonial-tony-leopold', _type: 'testimonial', order: 3, personName: 'Tony Leopold', personTitle: 'SVP, Chief Technology & Strategy Officer, United Rentals', quote: 'With earlier access to project scope and timelines, we can plan equipment strategy more effectively and support contractors with greater efficiency from day one.' },
-    { _id: 'testimonial-mike-mckeen', _type: 'testimonial', order: 4, personName: 'Mike McKeen', personTitle: 'President & CEO, EPC Real Estate', quote: 'Block and Mortar creates a collaborative framework to model cost, schedule, and design together giving us greater confidence in the decisions we make moving projects forward.' },
-  ];
-  for (const t of testimonials) {
-    await client.createOrReplace(t);
-    console.log(`  ✓ ${t.personName}`);
-  }
+// ── Team page ─────────────────────────────────────────────────────────────────
+
+async function seedTeamPage() {
+  console.log('\nSeeding teamPage…');
+  await client.createOrReplace({
+    _id: 'singleton-teamPage',
+    _type: 'teamPage',
+    h1: 'Built-world leaders meet digital product experience.',
+    subheader: "Our founding team comes from across the construction and technology industry. Owners, builders, designers, and engineers who've lived the problems we now build against.",
+    storyHeading: 'We started Block and Mortar because development deserves a better operating system.',
+    storyBody:
+      'Block and Mortar was started by industry practitioners who saw the need for a better way of doing real estate development — one that was more collaborative, with technology that was actually good.\n\n' +
+      "It also needed to make an immediate impact. We're a team of experienced founders and operators spanning technology, design, development, and construction who have built businesses and delivered projects at scale — united by a shared belief that the future of development belongs to those who integrate disciplines rather than operate in silos.",
+    visionHeading: 'Real estate development is on the verge of transformation. Technology is the catalyst.',
+    visionBody:
+      'Block and Mortar unifies the entire development lifecycle — seamlessly connecting information, partners, and execution into a single intelligent platform.\n\n' +
+      'From first concept to final delivery, we empower teams to move faster, make smarter decisions, and bring projects to life with unprecedented precision. What was once manual and disjointed becomes coordinated and data-driven — turning development into a system, not a series of disconnected steps.',
+    applyHeading: "We're building the future of the built environment — and we want people who'll shape it, not just work in it.",
+    applyBody:
+      "If you're driven to rethink how projects get designed, delivered, and scaled — and you thrive at the intersection of technology, infrastructure, and real-world impact — we'd love to hear from you.",
+  });
+  console.log('  ✓ teamPage');
 }
 
 // ── Run ───────────────────────────────────────────────────────────────────────
@@ -681,6 +736,7 @@ async function seedHome() {
 async function seed() {
   await seedHome();
   await seedTeam();
+  await seedTeamPage();
   await seedLegal();
   console.log('\n✅ All content seeded. Open the Studio to review and publish drafts.');
 }

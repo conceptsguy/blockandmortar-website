@@ -1,5 +1,5 @@
 import { useQuery, useLiveMode } from '../lib/loader';
-import { HOME_QUERY, TESTIMONIALS_QUERY } from '../lib/queries';
+import { HOME_QUERY, TEAM_PAGE_QUERY } from '../lib/queries';
 import { liveClient } from '../lib/sanity';
 import { Nav, Hero, TrustedBy, PromptSection, Steps, Bento, Verticals, CTA, Footer } from './Sections';
 import CollabScene from './CollabScene';
@@ -11,9 +11,8 @@ function LiveMode() {
   return null;
 }
 
-export default function App({ homeInitial, testimonialsInitial, isDraftMode = false }) {
+export default function App({ homeInitial, isDraftMode = false }) {
   const { data: homeData } = useQuery(HOME_QUERY, {}, { initial: homeInitial });
-  const { data: testimonials } = useQuery(TESTIMONIALS_QUERY, {}, { initial: testimonialsInitial });
 
   return (
     <>
@@ -22,7 +21,8 @@ export default function App({ homeInitial, testimonialsInitial, isDraftMode = fa
       <Hero
         heading={homeData?.heroHeading}
         subheading={homeData?.heroSubheading}
-        testimonials={testimonials ?? []}
+        testimonials={homeData?.testimonials ?? []}
+        logos={homeData?.logos ?? []}
       />
       <TrustedBy />
       <PromptSection
@@ -40,6 +40,7 @@ export default function App({ homeInitial, testimonialsInitial, isDraftMode = fa
         heading={homeData?.bentoHeading}
         headingEm={homeData?.bentoHeadingEm}
         description={homeData?.bentoDescription}
+        boxes={homeData?.bentoBoxes ?? []}
       />
       <section className="section" id="collab" style={{ paddingTop: 80 }}>
         <div className="container">

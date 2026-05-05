@@ -41,6 +41,15 @@ export default defineConfig({
                   .schemaType('homePage')
                   .documentId('singleton-homePage'),
               ),
+            // Team Page is a singleton — always the same document ID
+            S.listItem()
+              .title('Team Page')
+              .id('teamPage')
+              .child(
+                S.document()
+                  .schemaType('teamPage')
+                  .documentId('singleton-teamPage'),
+              ),
           ]),
     }),
 
@@ -54,7 +63,7 @@ export default defineConfig({
       resolve: {
         mainDocuments: defineDocuments([
           { route: '/',              filter: `_type == "homePage"` },
-          { route: '/team',          filter: `_type == "teamMember"` },
+          { route: '/team',          filter: `_type == "teamPage"` },
           { route: '/accessibility', filter: `_type == "legalPage" && pageKey == "accessibility"` },
           { route: '/privacy',       filter: `_type == "legalPage" && pageKey == "privacy"` },
           { route: '/terms',         filter: `_type == "legalPage" && pageKey == "terms"` },
