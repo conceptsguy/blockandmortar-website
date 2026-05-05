@@ -7,12 +7,14 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  bodyClass?: string;
 }
 
 const {
   title,
   description = 'AI-powered cost intelligence on a single collaborative platform.',
   ogImage,
+  bodyClass,
 } = Astro.props;
 ---
 
@@ -29,10 +31,10 @@ const {
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <slot name="head" />
   </head>
-  <body>
+  <body class={bodyClass}>
     <slot />
     <VisualEditing />
   </body>

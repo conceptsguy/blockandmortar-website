@@ -9,13 +9,13 @@ export default defineConfig({
     react(),
     sitemap(),
   ],
-  output: 'static',
+  output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },
   }),
   vite: {
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-dom/client'],
+      include: ['react', 'react-dom', 'react-dom/client', '@sanity/visual-editing'],
     },
   },
 });

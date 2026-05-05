@@ -1,33 +1,6 @@
 ---
-// Establishes the postMessage channel the Sanity Presentation tool needs
-// when the site is loaded inside the Studio iframe preview.
-// Has zero effect when visited normally in a browser.
 ---
-<script is:inline>
-  (function () {
-    // Only run inside the Presentation tool iframe
-    if (window.self === window.top) return;
-
-    var CHANNEL = 'sanity-visual-editing';
-    var handshook = false;
-
-    function send(type, data) {
-      try {
-        window.parent.postMessage({ type: type, data: data || {}, domain: CHANNEL }, '*');
-      } catch (_) {}
-    }
-
-    window.addEventListener('message', function (e) {
-      var msg = e.data;
-      if (!msg || msg.domain !== CHANNEL) return;
-
-      if (!handshook && msg.type === 'handshake') {
-        handshook = true;
-        send('handshake/ack', { id: msg.data && msg.data.id });
-      }
-    });
-
-    // Announce that visual editing is available
-    send('presentation/focus', {});
-  })();
+<script>
+  import { enableVisualEditing } from '@sanity/visual-editing';
+  enableVisualEditing();
 </script>

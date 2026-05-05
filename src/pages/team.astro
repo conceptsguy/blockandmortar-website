@@ -1,34 +1,23 @@
 ---
-import { sanityClient } from '../lib/sanity';
-import { createImageUrlBuilder } from '@sanity/image-url';
+import { loadQuery, setServerClient } from '../lib/loader';
+import { previewClient, sanityClient } from '../lib/sanity';
+import { TEAM_QUERY, TEAM_PAGE_QUERY } from '../lib/queries';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TeamPage from '../components/TeamPage';
 
-const builder = createImageUrlBuilder(sanityClient);
+const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
+setServerClient(isDraftMode ? previewClient : sanityClient);
 
-const rawMembers = await sanityClient.fetch(
-  `*[_type == "teamMember"] | order(order asc){
-    name, role, initials, tint, photo, bio, order
-  }`
-) ?? [];
-
-const members = rawMembers.map((m: any) => ({
-  name:     m.name,
-  role:     m.role,
-  initials: m.initials,
-  tint:     m.tint,
-  photo:    m.photo
-    ? builder.image(m.photo).width(400).height(400).fit('crop').url()
-    : null,
-  bio:      m.bio,
-  order:    m.order,
-}));
+const [teamInitial, teamPageInitial] = await Promise.all([
+  loadQuery(TEAM_QUERY),
+  loadQuery(TEAM_PAGE_QUERY),
+]);
 
 const teamSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'Block and Mortar Team',
-  itemListElement: members.map((m: any, i: number) => ({
+  itemListElement: (teamInitial.data ?? []).map((m: any, i: number) => ({
     '@type': 'ListItem',
     position: i + 1,
     item: {
@@ -37,11 +26,7 @@ const teamSchema = {
       jobTitle: m.role,
       image: m.photo ?? undefined,
       description: m.bio,
-      worksFor: {
-        '@type': 'Organization',
-        name: 'Block and Mortar',
-        url: 'https://blockandmortar.ai',
-      },
+      worksFor: { '@type': 'Organization', name: 'Block and Mortar', url: 'https://blockandmortar.ai' },
     },
   })),
 };
@@ -50,7 +35,13 @@ const teamSchema = {
 <BaseLayout
   title="The Team — Block and Mortar"
   description="Meet the Block & Mortar founding team — operators, builders, designers, and engineers who've lived the problems we now build against."
+  bodyClass="team-page"
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(teamSchema)} />
-  <TeamPage members={members} client:only="react" />
+  <TeamPage
+    teamInitial={teamInitial}
+    teamPageInitial={teamPageInitial}
+    isDraftMode={isDraftMode}
+    client:only="react"
+  />
 </BaseLayout>

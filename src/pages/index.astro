@@ -1,27 +1,14 @@
 ---
-import { sanityClient } from '../lib/sanity';
+import { loadQuery, setServerClient } from '../lib/loader';
+import { previewClient, sanityClient } from '../lib/sanity';
+import { HOME_QUERY } from '../lib/queries';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import App from '../components/App';
 
-const [homeData, testimonials] = await Promise.all([
-  sanityClient.fetch(
-    `*[_type == "homePage" && _id == "singleton-homePage"][0]{
-      heroHeading,
-      heroSubheading,
-      ctaHeading,
-      ctaDescription,
-      steps[]{ number, title, body },
-      verticals[]{ key, title, meta }
-    }`
-  ),
-  sanityClient.fetch(
-    `*[_type == "testimonial"] | order(order asc){
-      quote,
-      personName,
-      personTitle
-    }`
-  ),
-]);
+const isDraftMode = Astro.cookies.get('sanity-preview')?.value === 'true';
+setServerClient(isDraftMode ? previewClient : sanityClient);
+
+const homeInitial = await loadQuery(HOME_QUERY);
 
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -29,7 +16,7 @@ const orgSchema = {
   name: 'Block and Mortar',
   alternateName: 'Block & Mortar',
   url: 'https://blockandmortar.ai',
-  logo: 'https://blockandmortar.ai/favicon.svg',
+  logo: 'https://blockandmortar.ai/favicon.png',
   description:
     'AI-powered cost intelligence platform for real estate development — estimate, plan, and manage construction from a single collaborative workspace.',
   contactPoint: {
@@ -46,13 +33,8 @@ const orgSchema = {
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(orgSchema)} />
   <App
-    heroHeading={homeData?.heroHeading}
-    heroSubheading={homeData?.heroSubheading}
-    ctaHeading={homeData?.ctaHeading}
-    ctaDescription={homeData?.ctaDescription}
-    steps={homeData?.steps ?? []}
-    verticals={homeData?.verticals ?? []}
-    testimonials={testimonials ?? []}
+    homeInitial={homeInitial}
+    isDraftMode={isDraftMode}
     client:only="react"
   />
 </BaseLayout>
