@@ -13,8 +13,6 @@ body.legal-page .nav.scrolled {
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
   border-bottom: 1px solid rgba(244, 239, 230, 0.08);
 }
-body.legal-page .nav .brand-logo { filter: invert(1); }
-body.legal-page .nav.scrolled .brand-logo { filter: invert(1); }
 body.legal-page .nav-links { color: rgba(244, 239, 230, 0.72); }
 body.legal-page .nav.on-hero .nav-links a,
 body.legal-page .nav.scrolled .nav-links a { color: rgba(244, 239, 230, 0.72); }
@@ -25,10 +23,11 @@ body.legal-page .nav.scrolled .nav-right .nav-login { color: rgba(244, 239, 230,
 body.legal-page .nav.on-hero .nav-right .nav-login:hover,
 body.legal-page .nav.scrolled .nav-right .nav-login:hover { color: #f4efe6; }
 body.legal-page .nav .btn-primary {
-  background: #f4efe6;
+  background: #F1EADE;
+  border-color: #F1EADE;
   color: #1a1410;
 }
-body.legal-page .nav .btn-primary:hover { background: #fff; }
+body.legal-page .nav .btn-primary:hover { background: #fff; border-color: #fff; }
 body.legal-page .nav .btn-primary .arrow { background: rgba(26,20,16,0.15); }
 
 /* Footer stays dark-on-dark like the rest of the site. */
