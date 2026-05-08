@@ -25,3 +25,4 @@ dist/
 # Sanity
 .sanity/
 .vercel
+branch_structure.json

@@ -279,7 +279,8 @@ export function Nav() {
       <nav className={'nav ' + (scrolled ? 'scrolled' : 'on-hero')}>
         <div className="container nav-inner">
           <a href={brandHref} onClick={onBrandClick} className="brand">
-            <img src="/assets/logo.png" alt="Block & Mortar" className="brand-logo" />
+            <img src="/assets/bm-logo-thin.png" alt="Block & Mortar" className="brand-logo brand-logo--dark" />
+            <img src="/assets/bm-ligh-logo.png" alt="" aria-hidden="true" className="brand-logo brand-logo--light" />
           </a>
           <div className="nav-links">
             {NAV_LINKS.map(l => (
@@ -288,7 +289,7 @@ export function Nav() {
           </div>
           <div className="nav-right">
             <a href="#" className="nav-login">Log in</a>
-            <a href="#" onClick={openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
+            <a href="#" onClick={openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span></a>
           </div>
           <button
             className={'nav-hamburger' + (menuOpen ? ' is-open' : '')}
@@ -310,7 +311,7 @@ export function Nav() {
         </nav>
         <div className="nav-overlay-actions">
           <a href="#" className="nav-overlay-login" onClick={closeMenu}>Log in</a>
-          <a href="#" onClick={(e) => { closeMenu(); openDemoModal(e); }} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
+          <a href="#" onClick={(e) => { closeMenu(); openDemoModal(e); }} className="btn btn-primary">Request a demo <span className="arrow">→</span></a>
         </div>
       </div>
     </>
@@ -445,7 +446,17 @@ export function Hero({ heading, subheading, testimonials = [], logos = [] }) {
       rows: [['TI', '$186K'], ['FF&E', '$98K'], ['GMP', '$612K'], ['Schedule', '14 wk']]
     },
   ];
-  const [hovered, setHovered] = useState(null);
+  const KEYS = properties.map(p => p.key);
+  const [active, setActive] = useState(KEYS[0]);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setActive(k => KEYS[(KEYS.indexOf(k) + 1) % KEYS.length]);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [paused]);
 
   const FALLBACK_LOGOS = [
     { alt: 'AON',            src: '/assets/logo-aon.png' },
@@ -463,9 +474,9 @@ export function Hero({ heading, subheading, testimonials = [], logos = [] }) {
       {properties.map(p => (
         <div
           key={p.key}
-          className={'hero-hotspot anchor-' + p.anchor + (hovered === p.key ? ' is-hovered' : '')}
-          onMouseEnter={() => setHovered(p.key)}
-          onMouseLeave={() => setHovered(h => h === p.key ? null : h)}
+          className={'hero-hotspot anchor-' + p.anchor + (active === p.key ? ' is-hovered' : '')}
+          onMouseEnter={() => { setPaused(true); setActive(p.key); }}
+          onMouseLeave={() => setPaused(false)}
         >
           <button className="hotspot-btn" aria-label={p.name}>
             <span className="hotspot-pulse" />
@@ -484,7 +495,7 @@ export function Hero({ heading, subheading, testimonials = [], logos = [] }) {
               {p.rows.map(([k, v], i) => (
                 <div className="hero-float-row" key={k}>
                   <span>{k}</span>
-                  <TypedNum value={v} active={hovered === p.key} delay={140 + i * 180} />
+                  <TypedNum value={v} active={active === p.key} delay={140 + i * 180} />
                 </div>
               ))}
             </div>
@@ -501,8 +512,8 @@ export function Hero({ heading, subheading, testimonials = [], logos = [] }) {
             {subheading ?? 'AI-powered cost intelligence on a single collaborative platform.'}
           </p>
           <div className="hero-cta-row">
-            <a href="#" onClick={openDemoModal} className="btn btn-dark">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
-            <a href="#how" className="hero-link">See how it works</a>
+            <a href="#" onClick={openDemoModal} className="btn btn-dark">Request a demo <span className="arrow">→</span></a>
+            <a href="#prompt" onClick={(e) => smoothScrollTo('#prompt', e)} className="hero-link">See how it works</a>
           </div>
           <HeroQuotes quotes={testimonials} />
         </div>
@@ -817,7 +828,7 @@ export function CTA({ heading, headingEm, description }) {
           </h2>
           <p>{description ?? "Bring your toughest deal. We'll show you a live estimate, a defensible schedule, and the path from prompt to pro forma in one working session."}</p>
           <div className="row">
-            <a href="#" onClick={openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span><span className="brick-shadow" aria-hidden="true" /></a>
+            <a href="#" onClick={openDemoModal} className="btn btn-primary">Request a demo <span className="arrow">→</span></a>
             <a href="#" onClick={openDemoModal} className="btn btn-ghost">Talk to the team</a>
           </div>
         </div>
